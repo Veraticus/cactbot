@@ -29,7 +29,6 @@ Options.Triggers.push({
             netRegexJa: NetRegexes.startsUsing({ source: 'ダイヤウェポン', id: '5FA7', capture: false }),
             netRegexCn: NetRegexes.startsUsing({ source: '钻石神兵', id: '5FA7', capture: false }),
             netRegexKo: NetRegexes.startsUsing({ source: '다이아몬드 웨폰', id: '5FA7', capture: false }),
-            condition: Conditions.caresAboutAOE(),
             response: Responses.aoe(),
         },
         {
@@ -102,19 +101,6 @@ Options.Triggers.push({
             response: Responses.knockback(),
         },
         {
-            id: 'Diamond Airship\'s Bane',
-            type: 'StartsUsing',
-            netRegex: NetRegexes.startsUsing({ source: 'The Diamond Weapon', id: '5FE8', capture: false }),
-            netRegexDe: NetRegexes.startsUsing({ source: 'Diamant-Waffe', id: '5FE8', capture: false }),
-            netRegexFr: NetRegexes.startsUsing({ source: 'Arme Diamant', id: '5FE8', capture: false }),
-            netRegexJa: NetRegexes.startsUsing({ source: 'ダイヤウェポン', id: '5FE8', capture: false }),
-            netRegexCn: NetRegexes.startsUsing({ source: '钻石神兵', id: '5FE8', capture: false }),
-            netRegexKo: NetRegexes.startsUsing({ source: '다이아몬드 웨폰', id: '5FE8', capture: false }),
-            durationSeconds: 5,
-            alertText: (_data, _matches, output) => output.teleportEast(),
-            outputStrings: sharedOutputStrings,
-        },
-        {
             id: 'Diamond Outrage',
             type: 'StartsUsing',
             netRegex: NetRegexes.startsUsing({ source: 'The Diamond Weapon', id: '5FD7', capture: false }),
@@ -123,7 +109,6 @@ Options.Triggers.push({
             netRegexJa: NetRegexes.startsUsing({ source: 'ダイヤウェポン', id: '5FD7', capture: false }),
             netRegexCn: NetRegexes.startsUsing({ source: '钻石神兵', id: '5FD7', capture: false }),
             netRegexKo: NetRegexes.startsUsing({ source: '다이아몬드 웨폰', id: '5FD7', capture: false }),
-            condition: Conditions.caresAboutAOE(),
             response: Responses.aoe(),
         },
         {
