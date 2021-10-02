@@ -162,6 +162,7 @@ Options.Triggers.push({
                 text: {
                     en: 'Drop Ice Outside',
                     de: 'Eis draußen ablegen',
+                    cn: '把冰放在外面',
                 },
             },
         },
@@ -180,6 +181,11 @@ Options.Triggers.push({
             id: 'O10N Rime Wreath',
             type: 'StartsUsing',
             netRegex: NetRegexes.startsUsing({ id: '33EF', source: 'Ancient Dragon', capture: false }),
+            netRegexDe: NetRegexes.startsUsing({ id: '33EF', source: 'Antik(?:e|er|es|en) Drache', capture: false }),
+            netRegexFr: NetRegexes.startsUsing({ id: '33EF', source: 'Dragon Ancien', capture: false }),
+            netRegexJa: NetRegexes.startsUsing({ id: '33EF', source: 'エンシェントドラゴン', capture: false }),
+            netRegexCn: NetRegexes.startsUsing({ id: '33EF', source: '远古之龙', capture: false }),
+            netRegexKo: NetRegexes.startsUsing({ id: '33EF', source: '고룡', capture: false }),
             response: Responses.aoe(),
         },
         {
