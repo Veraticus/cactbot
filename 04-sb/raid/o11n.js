@@ -168,7 +168,9 @@ Options.Triggers.push({
                 text: {
                     en: 'Drop Fire Outside',
                     de: 'Feuer draußen ablegen',
+                    fr: 'Déposez le feu à l\'extérieur',
                     cn: '把火放在外面',
+                    ko: '불 장판 바깥으로 유도',
                 },
             },
         },
@@ -193,7 +195,9 @@ Options.Triggers.push({
                 text: {
                     en: 'Use duty action on Conductive Focus',
                     de: 'Benutze Spezialkommando auf "Ziel des Blitzstrahls"',
+                    fr: 'Utilisez l\'action spéciale sur le Point de convergence électrique',
                     cn: '在雷力投射点上使用任务指令',
+                    ko: '뇌력 투사 지점에 교란기 사용',
                 },
             },
         },

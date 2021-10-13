@@ -38,7 +38,9 @@ Options.Triggers.push({
                 text: {
                     en: 'Away From Boss',
                     de: 'Weg vom Boss',
+                    fr: 'Éloignez-vous du boss',
                     cn: '远离BOSS',
+                    ko: '보스에게서 떨어지기',
                 },
             },
         },
@@ -55,7 +57,7 @@ Options.Triggers.push({
                     fr: 'Posez les AoE au loin',
                     ja: '離れてAoEを置く',
                     cn: '远离放置追踪AOE',
-                    ko: '장판 멀리빼기', // FIXME
+                    ko: '연속장판 멀리빼기',
                 },
             },
         },

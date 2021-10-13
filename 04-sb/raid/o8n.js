@@ -104,7 +104,9 @@ Options.Triggers.push({
                 text: {
                     en: 'Get Outside Destination',
                     de: 'Geh aus dem Zielkreis raus',
+                    fr: 'Placez-vous à l\'extérieur du cercle d\'arrivée',
                     cn: '去传送目的地的外圈',
+                    ko: '마법진 바깥쪽으로 이동',
                 },
             },
         },
@@ -132,6 +134,7 @@ Options.Triggers.push({
                     fr: 'Feu sur VOUS',
                     ja: '自分にファイガ',
                     cn: '火点名',
+                    ko: '파이가 대상자',
                 },
             },
         },

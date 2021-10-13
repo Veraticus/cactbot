@@ -49,12 +49,16 @@ Options.Triggers.push({
                 lineStackOnYou: {
                     en: 'Line Stack on YOU',
                     de: 'Linien Stack auf DIR',
+                    fr: 'Package en ligne sur VOUS',
                     cn: '直线分摊点名',
+                    ko: '직선 쉐어 대상자',
                 },
                 lineStackOn: {
                     en: 'Line Stack on ${player}',
                     de: 'Linien Stack auf ${player}',
+                    fr: 'Package en ligne sur ${player}',
                     cn: '直线分摊点${player}',
+                    ko: '${player} 직선 쉐어',
                 },
             },
         },
