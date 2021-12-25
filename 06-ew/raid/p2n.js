@@ -96,18 +96,22 @@ Options.Triggers.push({
                 nc: {
                     en: 'North Corners',
                     de: 'nördliche Ecken',
+                    ko: '북쪽 모서리',
                 },
                 ec: {
                     en: 'East Corners',
                     de: 'östliche Ecken',
+                    ko: '동쪽 모서리',
                 },
                 sc: {
                     en: 'South Corners',
                     de: 'südliche Ecken',
+                    ko: '남쪽 모서리',
                 },
                 wc: {
                     en: 'West Corners',
                     de: 'westliche Ecken',
+                    ko: '서쪽 모서리',
                 },
             },
         },
@@ -118,13 +122,7 @@ Options.Triggers.push({
             netRegexDe: NetRegexes.startsUsing({ id: '67F6', source: 'Hippokampos', capture: false }),
             netRegexFr: NetRegexes.startsUsing({ id: '67F6', source: 'Hippokampos', capture: false }),
             netRegexJa: NetRegexes.startsUsing({ id: '67F6', source: 'ヒッポカムポス', capture: false }),
-            alertText: (_data, _matches, output) => output.text(),
-            outputStrings: {
-                text: {
-                    en: 'Aoe--Get on grid',
-                    de: 'AoE--Geh auf die Gitter',
-                },
-            },
+            response: Responses.aoe(),
         },
         {
             // Spread aoe marker on some players, not all
@@ -166,13 +164,7 @@ Options.Triggers.push({
             netRegexDe: NetRegexes.startsUsing({ id: '6807', source: 'Hippokampos', capture: false }),
             netRegexFr: NetRegexes.startsUsing({ id: '6807', source: 'Hippokampos', capture: false }),
             netRegexJa: NetRegexes.startsUsing({ id: '6807', source: 'ヒッポカムポス', capture: false }),
-            alertText: (_data, _matches, output) => output.text(),
-            outputStrings: {
-                text: {
-                    en: 'Knockback--Stay on grid',
-                    de: 'Rückstoß--Bleib auf den Gittern stehen',
-                },
-            },
+            response: Responses.knockback(),
         },
         {
             // Aoe from head outside the arena
