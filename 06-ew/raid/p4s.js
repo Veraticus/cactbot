@@ -1,3 +1,39 @@
+const roleOutputStrings = {
+    tankHealer: {
+        en: 'Tank/Healer',
+        ja: 'タンク＆ヒーラ',
+        ko: '탱&힐',
+    },
+    dps: {
+        en: 'DPS',
+        de: 'DPS',
+        fr: 'DPS',
+        ja: 'DPS',
+        cn: 'DPS',
+        ko: 'DPS',
+    },
+    roleTethers: {
+        en: '${role} Tethers',
+        ja: '線もらう: ${role}',
+        ko: '줄 받기: ${role}',
+    },
+    roleDebuffs: {
+        en: '${role} Role Calls',
+        ja: 'デバフもらう: ${role}',
+        ko: '디버프 받기: ${role}',
+    },
+    roleEverything: {
+        en: '${role} Everything',
+        ja: '${role} 全てもらう',
+        ko: '${role} 전부 받아요',
+    },
+    roleTowers: {
+        en: '${role} Towers',
+        ja: '塔: ${role}',
+        ko: '타워: ${role}',
+    },
+    unknown: Outputs.unknown,
+};
 // Due to changes introduced in patch 5.2, overhead markers now have a random offset
 // added to their ID. This offset currently appears to be set per instance, so
 // we can determine what it is from the first overhead marker we see.
@@ -27,7 +63,7 @@ Options.Triggers.push({
                     en: 'Stack for Puddle AOEs',
                     de: 'Stacken (Pfützen)',
                     fr: 'Packez les zones au sol d\'AoEs',
-                    ja: 'スタック',
+                    ja: '真ん中で頭割り',
                     cn: '集合放置AOE',
                     ko: '중앙에 모이기',
                 },
@@ -47,6 +83,8 @@ Options.Triggers.push({
                     en: 'Bait Jump?',
                     de: 'Sprung ködern?',
                     fr: 'Attirez le saut ?',
+                    ja: 'ジャンプ誘導?',
+                    ko: '점프 유도?',
                 },
             },
         },
@@ -60,6 +98,8 @@ Options.Triggers.push({
                     en: 'Bait Earthshakers?',
                     de: 'Erdstoß ködern?',
                     fr: 'Orientez les secousses ?',
+                    ja: 'アスシェイカー誘導?',
+                    ko: '어스세이커 유도?',
                 },
             },
         },
@@ -73,6 +113,7 @@ Options.Triggers.push({
                     en: 'Middle Knockback',
                     de: 'Rückstoß von der Mitte',
                     fr: 'Poussée au milieu',
+                    ja: '真ん中でノックバック',
                     cn: '中间击退',
                     ko: '중앙에서 넉백',
                 },
@@ -111,6 +152,184 @@ Options.Triggers.push({
             response: Responses.aoe(),
         },
         {
+            id: 'P4S Bloodrake Store',
+            type: 'Ability',
+            netRegex: NetRegexes.ability({ id: '69D8', source: 'Hesperos' }),
+            netRegexDe: NetRegexes.ability({ id: '69D8', source: 'Hesperos' }),
+            netRegexFr: NetRegexes.ability({ id: '69D8', source: 'Hespéros' }),
+            netRegexJa: NetRegexes.ability({ id: '69D8', source: 'ヘスペロス' }),
+            condition: (data) => {
+ let _a; return ((_a = data.bloodrakeCounter) !== null && _a !== void 0 ? _a : 0) < 3;
+},
+            suppressSeconds: 1,
+            infoText: (data, matches, output) => {
+                let _a; let _b; let _c; let _d; let _e; let _f; let _g;
+                const roles = {
+                    'dps': output.dps(),
+                    'tank/healer': output.tankHealer(),
+                };
+                const roleRaked = data.party.isDPS(matches.target) ? 'dps' : 'tank/healer';
+                const roleOther = data.party.isDPS(matches.target) ? 'tank/healer' : 'dps';
+                // Second bloodrake = Debuffs later
+                if (((_a = data.bloodrakeCounter) !== null && _a !== void 0 ? _a : 0) === 2) {
+                    if (roleRaked === 'dps') {
+                        ((_b = data.debuffRole) !== null && _b !== void 0 ? _b : (data.debuffRole = [])).push('healer');
+                        data.debuffRole.push('tank');
+                    } else {
+                        ((_c = data.debuffRole) !== null && _c !== void 0 ? _c : (data.debuffRole = [])).push(roleOther);
+                    }
+                    // May end up needing both tether and debuff
+                    const tetherRole = (_d = data.tetherRole) !== null && _d !== void 0 ? _d : (data.tetherRole = []);
+                    const debuffRole = (_e = data.debuffRole) !== null && _e !== void 0 ? _e : (data.debuffRole = []);
+                    if (tetherRole[0] === debuffRole[0])
+                        return output.roleEverything({ role: roles[roleOther] });
+                    return output.roleDebuffs({ role: roles[roleOther] });
+                }
+                // First bloodrake = Tethers later
+                if (roleRaked === 'dps') {
+                    ((_f = data.tetherRole) !== null && _f !== void 0 ? _f : (data.tetherRole = [])).push('healer');
+                    data.tetherRole.push('tank');
+                } else {
+                    ((_g = data.tetherRole) !== null && _g !== void 0 ? _g : (data.tetherRole = [])).push(roleOther);
+                }
+                return output.roleTethers({ role: roles[roleOther] });
+            },
+            outputStrings: roleOutputStrings,
+        },
+        {
+            id: 'P4S Belone Coils',
+            // 69DE is No Tank/Healer Belone Coils
+            // 69DF is No DPS Belone Coils
+            type: 'StartsUsing',
+            netRegex: NetRegexes.startsUsing({ id: ['69DE', '69DF', '69E0', '69E1'], source: 'Hesperos' }),
+            netRegexDe: NetRegexes.startsUsing({ id: ['69DE', '69DF', '69E0', '69E1'], source: 'Hesperos' }),
+            netRegexFr: NetRegexes.startsUsing({ id: ['69DE', '69DF', '69E0', '69E1'], source: 'Hespéros' }),
+            netRegexJa: NetRegexes.startsUsing({ id: ['69DE', '69DF', '69E0', '69E1'], source: 'ヘスペロス' }),
+            preRun: (data) => {
+                if (!data.beloneCoilsTwo) {
+                    delete data.debuffRole;
+                    delete data.tetherRole;
+                    data.hasRoleCall = false;
+                    data.ignoreChlamys = true;
+                } else {
+                    data.ignoreChlamys = false;
+                }
+            },
+            suppressSeconds: 1,
+            response: (data, matches, output) => {
+                let _a; let _b; let _c; let _d; let _e; let _f;
+                // cactbot-builtin-response
+                output.responseOutputStrings = roleOutputStrings;
+                const roles = {
+                    'dps': output.dps(),
+                    'tank/healer': output.tankHealer(),
+                };
+                const roleTowers = matches.id === '69DE' ? 'dps' : 'tank/healer';
+                const roleOther = matches.id === '69DE' ? 'tank/healer' : 'dps';
+                // Second Coils = Debuffs later
+                if (data.beloneCoilsTwo) {
+                    if (roleTowers === 'dps') {
+                        ((_a = data.debuffRole) !== null && _a !== void 0 ? _a : (data.debuffRole = [])).push('healer');
+                        data.debuffRole.push('tank');
+                    } else {
+                        ((_b = data.debuffRole) !== null && _b !== void 0 ? _b : (data.debuffRole = [])).push('dps');
+                    }
+                    // For second coils, if you are not in the debuff list here you are tower
+                    if (!data.debuffRole.includes(data.role))
+                        return { ['alertText']: output.roleTowers({ role: roles[roleTowers] }) };
+                    // If you have tethers and debuff, you need everything
+                    const tetherRole = (_c = data.tetherRole) !== null && _c !== void 0 ? _c : (data.tetherRole = []);
+                    const debuffRole = (_d = data.debuffRole) !== null && _d !== void 0 ? _d : (data.debuffRole = []);
+                    if (debuffRole[0] === tetherRole[0])
+                        return { ['infoText']: output.roleEverything({ role: roles[roleOther] }) };
+                    return { ['infoText']: output.roleDebuffs({ role: roles[roleOther] }) };
+                }
+                // First Coils = Tethers later
+                if (roleTowers === 'dps') {
+                    ((_e = data.tetherRole) !== null && _e !== void 0 ? _e : (data.tetherRole = [])).push('healer');
+                    data.tetherRole.push('tank');
+                } else {
+                    ((_f = data.tetherRole) !== null && _f !== void 0 ? _f : (data.tetherRole = [])).push('dps');
+                }
+                // For first coils, there are tower and tethers
+                if (data.tetherRole.includes(data.role))
+                    return { ['alertText']: output.roleTethers({ role: roles[roleOther] }) };
+                return { ['alertText']: output.roleTowers({ role: roles[roleTowers] }) };
+            },
+            run: (data) => data.beloneCoilsTwo = true,
+        },
+        {
+            id: 'P4S Role Call',
+            type: 'GainsEffect',
+            netRegex: NetRegexes.gainsEffect({ effectId: ['AF2', 'AF3'], capture: true }),
+            condition: Conditions.targetIsYou(),
+            infoText: (data, matches, output) => {
+                let _a;
+                const debuffRole = ((_a = data.debuffRole) !== null && _a !== void 0 ? _a : (data.debuffRole = [])).includes(data.role);
+                if (matches.effectId === 'AF2') {
+                    // Call Pass Role Call if not in the debuff role
+                    if (!debuffRole)
+                        return output.passRoleCall();
+                    data.hasRoleCall = true;
+                }
+                // AF3 is obtained after passing Role Call (AF2)
+                if (matches.effectId === 'AF3')
+                    data.hasRoleCall = false;
+            },
+            outputStrings: {
+                passRoleCall: {
+                    en: 'Pass Role Call',
+                },
+            },
+        },
+        {
+            id: 'P4S Director\'s Belone',
+            type: 'Ability',
+            netRegex: NetRegexes.ability({ id: '69E6', source: 'Hesperos', capture: false }),
+            netRegexDe: NetRegexes.ability({ id: '69E6', source: 'Hesperos', capture: false }),
+            netRegexFr: NetRegexes.ability({ id: '69E6', source: 'Hespéros', capture: false }),
+            netRegexJa: NetRegexes.ability({ id: '69E6', source: 'ヘスペロス', capture: false }),
+            // Delay callout until debuffs are out
+            delaySeconds: 1.4,
+            alertText: (data, _matches, output) => {
+                let _a;
+                const debuffRole = ((_a = data.debuffRole) !== null && _a !== void 0 ? _a : (data.debuffRole = [])).includes(data.role);
+                if (!data.hasRoleCall && debuffRole)
+                    return output.text();
+            },
+            outputStrings: {
+                text: {
+                    en: 'Get Role Call',
+                },
+            },
+        },
+        {
+            id: 'P4S Inversive Chlamys',
+            // Possible a player still has not yet passed debuff
+            type: 'StartsUsing',
+            netRegex: NetRegexes.startsUsing({ id: '69ED', source: 'Hesperos', capture: false }),
+            netRegexDe: NetRegexes.startsUsing({ id: '69ED', source: 'Hesperos', capture: false }),
+            netRegexFr: NetRegexes.startsUsing({ id: '69ED', source: 'Hespéros', capture: false }),
+            netRegexJa: NetRegexes.startsUsing({ id: '69ED', source: 'ヘスペロス', capture: false }),
+            condition: (data) => !data.ignoreChlamys,
+            alertText: (data, _matches, output) => {
+                let _a;
+                const dps = ((_a = data.tetherRole) !== null && _a !== void 0 ? _a : (data.tetherRole = [])).includes('dps');
+                if (dps)
+                    return output.roleTethers({ role: output.dps() });
+                if (data.tetherRole.length)
+                    return output.roleTethers({ role: output.tankHealer() });
+                return output.roleTethers({ role: output.unknown() });
+            },
+            run: (data) => {
+                if (!data.beloneCoilsTwo) {
+                    delete data.tetherRole;
+                    data.hasRoleCall = false;
+                }
+            },
+            outputStrings: roleOutputStrings,
+        },
+        {
             id: 'P4S Elegant Evisceration',
             // This one does an aoe around the tank
             type: 'StartsUsing',
@@ -128,6 +347,9 @@ Options.Triggers.push({
             netRegexDe: NetRegexes.startsUsing({ id: '69D7', source: 'Hesperos', capture: false }),
             netRegexFr: NetRegexes.startsUsing({ id: '69D7', source: 'Hespéros', capture: false }),
             netRegexJa: NetRegexes.startsUsing({ id: '69D7', source: 'ヘスペロス', capture: false }),
+            preRun: (data) => {
+ let _a; return data.pinaxCount = ((_a = data.pinaxCount) !== null && _a !== void 0 ? _a : 0) + 1;
+},
             durationSeconds: 6,
             alarmText: (_data, _matches, output) => output.text(),
             outputStrings: {
@@ -135,7 +357,7 @@ Options.Triggers.push({
                     en: 'Thunder',
                     de: 'Blitz',
                     fr: 'Foudre',
-                    ja: 'サンダー',
+                    ja: '雷',
                     cn: '雷',
                     ko: '번개',
                 },
@@ -148,14 +370,63 @@ Options.Triggers.push({
             netRegexDe: NetRegexes.startsUsing({ id: '69D6', source: 'Hesperos', capture: false }),
             netRegexFr: NetRegexes.startsUsing({ id: '69D6', source: 'Hespéros', capture: false }),
             netRegexJa: NetRegexes.startsUsing({ id: '69D6', source: 'ヘスペロス', capture: false }),
-            infoText: (_data, _matches, output) => output.text(),
+            preRun: (data) => {
+ let _a; return data.pinaxCount = ((_a = data.pinaxCount) !== null && _a !== void 0 ? _a : 0) + 1;
+},
+            infoText: (data, _matches, output) => {
+                let _a;
+                if (((_a = data.pinaxCount) !== null && _a !== void 0 ? _a : 0) % 2)
+                    return output.text();
+                data.wellShiftKnockback = true;
+                return output.shiftWell();
+            },
             outputStrings: {
                 text: {
                     en: 'Well Pinax',
                     de: 'Brunnen-Pinax',
                     fr: 'Pinax d\'eau',
+                    ja: '水',
                     cn: '水',
+                    ko: '물',
                 },
+                shiftWell: {
+                    en: 'Well => Shift',
+                    ja: '水、その後シフティング',
+                    ko: '물, 그리고 보스 기믹',
+                },
+            },
+        },
+        {
+            id: 'P4S Well Pinax Knockback',
+            type: 'StartsUsing',
+            netRegex: NetRegexes.startsUsing({ id: '69D6', source: 'Hesperos' }),
+            netRegexDe: NetRegexes.startsUsing({ id: '69D6', source: 'Hesperos' }),
+            netRegexFr: NetRegexes.startsUsing({ id: '69D6', source: 'Hespéros' }),
+            netRegexJa: NetRegexes.startsUsing({ id: '69D6', source: 'ヘスペロス' }),
+            delaySeconds: (data, matches) => {
+                let _a;
+                // Delay for for Directional Shift on Even Well/Levinstrike Pinax Count
+                if (((_a = data.pinaxCount) !== null && _a !== void 0 ? _a : 0) % 2)
+                    return parseFloat(matches.castTime) - 5;
+                return parseFloat(matches.castTime) - 2.4;
+            },
+            durationSeconds: (data) => data.wellShiftKnockback ? 2.4 : 5,
+            response: (data, _matches, output) => {
+                // cactbot-builtin-response
+                output.responseOutputStrings = {
+                    knockback: Outputs.knockback,
+                    middleKnockback: {
+                        en: 'Middle Knockback',
+                        de: 'Rückstoß von der Mitte',
+                        fr: 'Poussée au milieu',
+                        ja: '中央でノックバック',
+                        cn: '中间击退',
+                        ko: '중앙에서 넉백',
+                    },
+                };
+                if (data.wellShiftKnockback)
+                    return { ['alertText']: output.knockback() };
+                return { ['infoText']: output.middleKnockback() };
             },
         },
         {
@@ -199,7 +470,9 @@ Options.Triggers.push({
                     en: 'North Cleave',
                     de: 'Cleave in den Norden',
                     fr: 'Cleave au nord',
+                    ja: '北の横',
                     cn: '北 两侧',
+                    ko: '북쪽으로',
                 },
             },
         },
@@ -216,7 +489,9 @@ Options.Triggers.push({
                     en: 'East Cleave',
                     de: 'Cleave in den Osten',
                     fr: 'Cleave à l\'est',
+                    ja: '東の横',
                     cn: '东 两侧',
+                    ko: '동쪽으로',
                 },
             },
         },
@@ -233,7 +508,9 @@ Options.Triggers.push({
                     en: 'South Cleave',
                     de: 'Cleave in den Süden',
                     fr: 'Cleave au sud',
+                    ja: '南の横',
                     cn: '南 两侧',
+                    ko: '남쪽으로',
                 },
             },
         },
@@ -250,12 +527,14 @@ Options.Triggers.push({
                     en: 'West Cleave',
                     de: 'Cleave in den Westen',
                     fr: 'Cleave à l\'ouest',
+                    ja: '西の横',
                     cn: '西 两侧',
+                    ko: '서쪽으로',
                 },
             },
         },
         {
-            id: 'P4S Northerly Shift Knockback',
+            id: 'P4S Northerly Shift Cape',
             type: 'StartsUsing',
             netRegex: NetRegexes.startsUsing({ id: '69FD', source: 'Hesperos', capture: false }),
             netRegexDe: NetRegexes.startsUsing({ id: '69FD', source: 'Hesperos', capture: false }),
@@ -267,12 +546,14 @@ Options.Triggers.push({
                     en: 'North Cape',
                     de: 'Umhang im Norden',
                     fr: 'Cape au nord',
+                    ja: '北でノックバック',
                     cn: '北 击退',
+                    ko: '북쪽 망토',
                 },
             },
         },
         {
-            id: 'P4S Easterly Shift Knockback',
+            id: 'P4S Easterly Shift Cape',
             type: 'StartsUsing',
             netRegex: NetRegexes.startsUsing({ id: '69FF', source: 'Hesperos', capture: false }),
             netRegexDe: NetRegexes.startsUsing({ id: '69FF', source: 'Hesperos', capture: false }),
@@ -284,12 +565,14 @@ Options.Triggers.push({
                     en: 'East Cape',
                     de: 'Umhang im Osten',
                     fr: 'Cape à l\'est',
+                    ja: '東でノックバック',
                     cn: '东 击退',
+                    ko: '동쪽 망토',
                 },
             },
         },
         {
-            id: 'P4S Southerly Shift Knockback',
+            id: 'P4S Southerly Shift Cape',
             type: 'StartsUsing',
             netRegex: NetRegexes.startsUsing({ id: '69FE', source: 'Hesperos', capture: false }),
             netRegexDe: NetRegexes.startsUsing({ id: '69FE', source: 'Hesperos', capture: false }),
@@ -301,12 +584,14 @@ Options.Triggers.push({
                     en: 'South Cape',
                     de: 'Umhang im Süden',
                     fr: 'Cape au sud',
+                    ja: '南でノックバック',
                     cn: '南 击退',
+                    ko: '남쪽 망토',
                 },
             },
         },
         {
-            id: 'P4S Westerly Shift Knockback',
+            id: 'P4S Westerly Shift Cape',
             type: 'StartsUsing',
             netRegex: NetRegexes.startsUsing({ id: '6A00', source: 'Hesperos', capture: false }),
             netRegexDe: NetRegexes.startsUsing({ id: '6A00', source: 'Hesperos', capture: false }),
@@ -318,9 +603,24 @@ Options.Triggers.push({
                     en: 'West Cape',
                     de: 'Umhang im Westen',
                     fr: 'Cape à l\'ouest',
+                    ja: '西でノックバック',
                     cn: '西 击退',
+                    ko: '서쪽 망토',
                 },
             },
+        },
+        {
+            id: 'P4S Directional Shift Knockback',
+            // Callout Knockback during Levinstrike + Shift
+            type: 'StartsUsing',
+            netRegex: NetRegexes.startsUsing({ id: ['69FD', '69FE', '69FF', '6A00'], source: 'Hesperos' }),
+            netRegexDe: NetRegexes.startsUsing({ id: ['69FD', '69FE', '69FF', '6A00'], source: 'Hesperos' }),
+            netRegexFr: NetRegexes.startsUsing({ id: ['69FD', '69FE', '69FF', '6A00'], source: 'Hespéros' }),
+            netRegexJa: NetRegexes.startsUsing({ id: ['69FD', '69FE', '69FF', '6A00'], source: 'ヘスペロス' }),
+            condition: (data) => !data.wellShiftKnockback,
+            delaySeconds: (data, matches) => parseFloat(matches.castTime) - 5,
+            response: Responses.knockback(),
+            run: (data) => data.wellShiftKnockback = false,
         },
         {
             id: 'P4S Acting Role',
@@ -340,25 +640,26 @@ Options.Triggers.push({
                     en: 'Acting ${actingRole}',
                     de: 'Handel ale ${actingRole}',
                     fr: 'Acteur ${actingRole}',
+                    ja: 'ロール: ${actingRole}',
                     cn: '扮演 ${actingRole}',
+                    ko: '역할: ${actingRole}',
                 },
-                dps: {
-                    en: 'DPS',
-                    de: 'DPS',
-                    fr: 'DPS',
-                    cn: 'DPS',
-                },
+                dps: roleOutputStrings.dps,
                 healer: {
                     en: 'Healer',
                     de: 'Heiler',
                     fr: 'Healer',
+                    ja: 'ヒーラ',
                     cn: '治疗',
+                    ko: '힐러',
                 },
                 tank: {
                     en: 'Tank',
                     de: 'Tank',
                     fr: 'Tank',
+                    ja: 'タンク',
                     cn: '坦克',
+                    ko: '탱커',
                 },
             },
         },
@@ -375,7 +676,9 @@ Options.Triggers.push({
                     en: 'Orb role positions',
                     de: 'Orb Rollenposition',
                     fr: 'Positions pour les orbes de rôles',
+                    ja: '玉、ロール散開',
                     cn: '职能撞球站位',
+                    ko: '오브 산개 위치로!',
                 },
             },
         },
@@ -400,35 +703,41 @@ Options.Triggers.push({
                     en: '${pinax} safe',
                     de: '${pinax} sicher',
                     fr: '${pinax} safe',
+                    ja: '安置: ${pinax}',
                     cn: '${pinax} 安全',
+                    ko: '안전한 곳: ${pinax}',
                 },
                 acid: {
                     en: 'Acid',
                     de: 'Gift',
                     fr: 'Poison',
+                    ja: '毒/緑',
                     cn: '毒',
+                    ko: '독/녹색',
                 },
                 lava: {
                     en: 'Lava',
                     de: 'Lava',
                     fr: 'Feu',
-                    ja: 'ラーヴァ',
+                    ja: '炎/赤',
                     cn: '火',
-                    ko: '용암',
+                    ko: '불/빨강',
                 },
                 well: {
                     en: 'Well',
                     de: 'Brunnen',
                     fr: 'Eau',
+                    ja: '水/白',
                     cn: '水',
+                    ko: '물/하양',
                 },
                 thunder: {
                     en: 'Thunder',
                     de: 'Blitz',
                     fr: 'Foudre',
-                    ja: 'サンダー',
+                    ja: '雷/青',
                     cn: '雷',
-                    ko: '번개',
+                    ko: '번개/파랑',
                 },
             },
         },
@@ -453,8 +762,10 @@ Options.Triggers.push({
                 tankbustersIn: {
                     en: 'In (Tankbusters)',
                     de: 'Rein (Tankbusters)',
-                    fr: 'Intérieur (Tank busters)',
+                    fr: 'À l\'intérieur (Tank busters)',
+                    ja: 'タンク近づく',
                     cn: '靠近 (坦克死刑)',
+                    ko: '탱커 안쪽으로',
                 },
                 getOut: Outputs.out,
             },
@@ -469,10 +780,12 @@ Options.Triggers.push({
             alertText: (data, _matches, output) => data.role === 'tank' ? output.tankbustersOut() : output.getIn(),
             outputStrings: {
                 tankbustersOut: {
-                    en: 'Get out, tankbuster',
+                    en: 'Out (Tankbusters)',
                     de: 'Raus, tankbuster',
-                    fr: 'Sortez, Tank busters',
+                    fr: 'À l\'extérieur, Tank busters',
+                    ja: 'タンク離れる',
                     cn: '去外面, 坦克死刑',
+                    ko: '탱커 바깥쪽으로',
                 },
                 getIn: Outputs.in,
             },
@@ -519,7 +832,9 @@ Options.Triggers.push({
                     en: 'Spread at tethered thorn',
                     de: 'Verteilen bei der Dornenhecke',
                     fr: 'Dispersez-vous vers une épine liée',
+                    ja: '結ばれた羽の方で散開',
                     cn: '在连线荆棘处散开',
+                    ko: '연결된 가시덤불 주위 산개',
                 },
             },
         },
@@ -545,7 +860,9 @@ Options.Triggers.push({
                     en: '${num}',
                     de: '${num}',
                     fr: '${num}',
+                    ja: '${num}',
                     cn: '${num}',
+                    ko: '${num}',
                 },
             },
         },
@@ -569,7 +886,9 @@ Options.Triggers.push({
                     en: 'Thorn ${num}',
                     de: 'Dornen ${num}',
                     fr: 'Épine ${num}',
+                    ja: '羽 ${num}',
                     cn: '荆棘 ${num}',
+                    ko: '가시 ${num}',
                 },
             },
         },
