@@ -44,6 +44,7 @@ Options.Triggers.push({
                     fr: 'Positions',
                     ja: '自分の担当マスへ',
                     cn: '上自己的方块',
+                    ko: '담당 타일로',
                 },
             },
         },
@@ -75,6 +76,7 @@ Options.Triggers.push({
                     fr: 'Chaînes proches sur VOUS',
                     ja: '紫鎖（近い方）',
                     cn: '紫锁（近）点名',
+                    ko: '내게 안쪽 쇠사슬',
                 },
             },
         },
@@ -95,6 +97,7 @@ Options.Triggers.push({
                     fr: 'Chaînes éloignées sur VOUS',
                     ja: '赤鎖（遠い方）',
                     cn: '红锁（远）点名',
+                    ko: '내게 바깥쪽 쇠사슬',
                 },
             },
         },
@@ -128,6 +131,7 @@ Options.Triggers.push({
                     fr: 'Chaînes proches sur ${close}',
                     ja: '紫鎖（近い方）：${close}',
                     cn: '紫锁（近）：${close}',
+                    ko: '안쪽 쇠사슬: ${close}',
                 },
                 farShacklesOn: {
                     en: 'Far Shackles on ${far}',
@@ -135,6 +139,7 @@ Options.Triggers.push({
                     fr: 'Chaînes éloignées sur ${far}',
                     ja: '赤鎖（遠い方）：${far}',
                     cn: '红锁（远）：${far}',
+                    ko: '바깥쪽 쇠사슬: ${far}',
                 },
                 shacklesOn: {
                     en: 'Close: ${close}, Far: ${far}',
@@ -142,6 +147,7 @@ Options.Triggers.push({
                     fr: 'Proches : ${close}, Éloignées : ${far}',
                     ja: '紫鎖（近い方）：${close}、赤鎖（遠い方）：${far}',
                     cn: '紫锁（近）：${close}、红锁（远）：${far}',
+                    ko: '안쪽: ${close}, 바깥쪽: ${far}',
                 },
             },
         },
@@ -232,6 +238,7 @@ Options.Triggers.push({
                     fr: 'Tank buster + Poussée => Packez-vous',
                     ja: 'タンクバスター+ノックバック => 頭割り',
                     cn: '坦克死刑+击退 => 分摊',
+                    ko: '탱버 + 넉백 → 쉐어',
                 },
             },
         },
@@ -250,6 +257,7 @@ Options.Triggers.push({
                     fr: 'Tank buster + Poussée => Brasier',
                     ja: 'タンクバスター+ノックバック => フレア',
                     cn: '坦克死刑+击退 => 核爆',
+                    ko: '탱버 + 넉백 → 플레어',
                 },
             },
         },
@@ -309,6 +317,7 @@ Options.Triggers.push({
                     fr: 'Chaînes à retardement sur ${player}',
                     ja: '時限の魔鎖：${player}',
                     cn: '时限魔锁点${player}',
+                    ko: '시간의 쇠사슬: ${player}',
                 },
                 shacklesOnYou: {
                     en: 'Shackles of Time on YOU',
@@ -316,6 +325,7 @@ Options.Triggers.push({
                     fr: 'Chaînes à retardement sur VOUS',
                     ja: '時限の魔鎖ついた',
                     cn: '时限魔锁点名',
+                    ko: '내게 시간의 쇠사슬',
                 },
             },
         },
@@ -324,13 +334,18 @@ Options.Triggers.push({
             type: 'GainsEffect',
             netRegex: NetRegexes.gainsEffect({ effectId: 'AB5' }),
             alertText: (data, matches, output) => {
-                if (!data.safeColor)
-                    return;
                 if (matches.target === data.me)
-                    return output[data.safeColor]();
-                return output[data.safeColor === 'fire' ? 'light' : 'fire']();
+                    return output.oppositeParty();
+                return output.oppositePlayer({ player: data.ShortName(matches.target) });
             },
-            outputStrings: fireLightOutputStrings,
+            outputStrings: {
+                oppositePlayer: {
+                    en: 'Opposite color of ${player}',
+                },
+                oppositeParty: {
+                    en: 'Opposite color of Party',
+                },
+            },
         },
         {
             id: 'P1S Fourfold Shackles of Companionship 1',
@@ -346,6 +361,7 @@ Options.Triggers.push({
                     fr: 'Proches (3s)',
                     ja: '紫鎖（近い方） (3s)',
                     cn: '紫锁（近）（3s）',
+                    ko: '안쪽 1 ▶ 3초',
                 },
             },
         },
@@ -363,6 +379,7 @@ Options.Triggers.push({
                     fr: 'Proches (8s)',
                     ja: '紫鎖（近い方） (8s)',
                     cn: '紫锁（近）（8s）',
+                    ko: '안쪽2 ▶ 8초',
                 },
             },
         },
@@ -380,6 +397,7 @@ Options.Triggers.push({
                     fr: 'Proches (13s)',
                     ja: '紫鎖（近い方） (13s)',
                     cn: '紫锁（近）（13s）',
+                    ko: '안쪽3 ▶ 13초',
                 },
             },
         },
@@ -397,6 +415,7 @@ Options.Triggers.push({
                     fr: 'Proches (18s)',
                     ja: '紫鎖（近い方） (18s)',
                     cn: '紫锁（近）（18s）',
+                    ko: '안쪽4 ▶ 18초',
                 },
             },
         },
@@ -414,6 +433,7 @@ Options.Triggers.push({
                     fr: 'Éloignées (3s)',
                     ja: '赤鎖（遠い方） (3s)',
                     cn: '红锁（远）（3s）',
+                    ko: '바깥쪽1 ▷ 3초',
                 },
             },
         },
@@ -431,6 +451,7 @@ Options.Triggers.push({
                     fr: 'Éloignées (8s)',
                     ja: '赤鎖（遠い方） (8s)',
                     cn: '红锁（远）（8s）',
+                    ko: '바깥쪽2 ▷ 8초',
                 },
             },
         },
@@ -448,6 +469,7 @@ Options.Triggers.push({
                     fr: 'Éloignées (13s)',
                     ja: '赤鎖（遠い方） (13s)',
                     cn: '红锁（远）（13s）',
+                    ko: '바깥쪽3 ▷ 13초',
                 },
             },
         },
@@ -465,6 +487,7 @@ Options.Triggers.push({
                     fr: 'Éloignées (18s)',
                     ja: '赤鎖（遠い方） (18s)',
                     cn: '红锁（远）（18s）',
+                    ko: '바깥쪽4 ▷ 18초',
                 },
             },
         },
