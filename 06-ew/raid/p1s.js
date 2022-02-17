@@ -41,7 +41,7 @@ Options.Triggers.push({
                 positions: {
                     en: 'Tile Positions',
                     de: 'Flächen-Positionen',
-                    fr: 'Positions',
+                    fr: 'Positions sur les cases',
                     ja: '自分の担当マスへ',
                     cn: '上自己的方块',
                     ko: '담당 타일로',
@@ -258,6 +258,36 @@ Options.Triggers.push({
                     ja: 'タンクバスター+ノックバック => フレア',
                     cn: '坦克死刑+击退 => 核爆',
                     ko: '탱버 + 넉백 → 플레어',
+                },
+            },
+        },
+        {
+            id: 'P1S Intemperate Torment Bottom',
+            type: 'StartsUsing',
+            netRegex: NetRegexes.startsUsing({ id: '661F', source: 'Erichthonios', capture: false }),
+            netRegexDe: NetRegexes.startsUsing({ id: '661F', source: 'Erichthonios', capture: false }),
+            netRegexFr: NetRegexes.startsUsing({ id: '661F', source: 'Érichthonios', capture: false }),
+            netRegexJa: NetRegexes.startsUsing({ id: '661F', source: 'エリクトニオス', capture: false }),
+            infoText: (_data, _matches, output) => output.text(),
+            outputStrings: {
+                text: {
+                    en: 'Bottom First',
+                    fr: 'Cube inférieur en premier',
+                },
+            },
+        },
+        {
+            id: 'P1S Intemperate Torment Top',
+            type: 'StartsUsing',
+            netRegex: NetRegexes.startsUsing({ id: '6620', source: 'Erichthonios', capture: false }),
+            netRegexDe: NetRegexes.startsUsing({ id: '6620', source: 'Erichthonios', capture: false }),
+            netRegexFr: NetRegexes.startsUsing({ id: '6620', source: 'Érichthonios', capture: false }),
+            netRegexJa: NetRegexes.startsUsing({ id: '6620', source: 'エリクトニオス', capture: false }),
+            infoText: (_data, _matches, output) => output.text(),
+            outputStrings: {
+                text: {
+                    en: 'Top First',
+                    fr: 'Cube supérieur en premier',
                 },
             },
         },
