@@ -13,7 +13,7 @@ const roleOutputStrings = {
         fr: 'DPS',
         ja: 'DPS',
         cn: 'DPS',
-        ko: 'DPS',
+        ko: '딜러',
     },
     roleTethers: {
         en: '${role} Tethers',
@@ -37,7 +37,7 @@ const roleOutputStrings = {
         fr: 'Tout ${role}',
         ja: '${role} 全てもらう',
         cn: '${role} 处理全部',
-        ko: '${role} 전부 받아요',
+        ko: '${role} 전부 받기',
     },
     roleTowers: {
         en: '${role} Towers',
@@ -49,38 +49,14 @@ const roleOutputStrings = {
     },
     unknown: Outputs.unknown,
 };
-const tetherOutputStrings = {
-    purpleTether: {
-        en: 'Purple Tether',
-        de: 'Lila Verbindung',
-        fr: 'lien violet',
-        cn: '紫标连线',
-    },
-    orangeTether: {
-        en: 'Orange Tether',
-        de: 'Orangene Verbindung',
-        fr: 'Lien orange',
-        cn: '橙标连线',
-    },
-    greenTether: {
-        en: 'Green Tether',
-        de: 'Grüne Verbindung',
-        fr: 'Lien vert',
-        cn: '绿标连线',
-    },
-    blueTether: {
-        en: 'Blue Tether',
-        de: 'Blaue Verbindung',
-        fr: 'Lien bleu',
-        cn: '蓝标连线',
-    },
-};
 const curtainCallOutputStrings = {
     group: {
         en: 'Group ${num}',
         de: 'Group ${num}',
         fr: 'Groupe ${num}',
+        ja: '${num} 組',
         cn: '${num} 组',
+        ko: '그룹: ${num}',
     },
 };
 // Due to changes introduced in patch 5.2, overhead markers now have a random offset
@@ -105,7 +81,7 @@ Options.Triggers.push({
     timelineFile: 'p4s.txt',
     initData: () => {
         return {
-            actTwoHeadMarkers: {},
+            actHeadmarkers: {},
         };
     },
     timelineTriggers: [
@@ -145,9 +121,9 @@ Options.Triggers.push({
                     en: 'Bait Jump ${dir}?',
                     de: 'Sprung ködern ${dir}?',
                     fr: 'Attirez le saut à l\'${dir}?',
-                    ja: 'ジャンプ誘導 ${dir}?',
+                    ja: 'ジャンプ誘導?: ${dir}',
                     cn: '引导跳跃 ${dir}?',
-                    ko: '점프 유도 ${dir}?', // FIXME
+                    ko: '점프 유도?: ${dir}',
                 },
                 baitJump: {
                     en: 'Bait Jump?',
@@ -155,7 +131,7 @@ Options.Triggers.push({
                     fr: 'Attirez le saut ?',
                     ja: 'ジャンプ誘導?',
                     cn: '引导跳跃',
-                    ko: '점프 유도',
+                    ko: '점프 유도?',
                 },
                 east: Outputs.east,
                 west: Outputs.west,
@@ -859,6 +835,7 @@ Options.Triggers.push({
                     '6A36': 'curtain',
                 };
                 data.act = actMap[matches.id];
+                data.actHeadmarkers = {};
             },
         },
         {
@@ -933,7 +910,9 @@ Options.Triggers.push({
                     en: '${dir1}/${dir2} first',
                     de: '${dir1}/${dir2} zuerst',
                     fr: '${dir1}/${dir2} en premier',
+                    ja: '${dir1}/${dir2}から',
                     cn: '先去 ${dir1}/${dir2}',
+                    ko: '${dir1}/${dir2}부터',
                 },
                 north: Outputs.north,
                 east: Outputs.east,
@@ -1021,6 +1000,9 @@ Options.Triggers.push({
                     en: '${dir1}/${dir2} first',
                     de: '${dir1}/${dir2} zuerst',
                     fr: '${dir1}/${dir2} en premier',
+                    ja: '${dir1}/${dir2}から',
+                    cn: '先去 ${dir1}/${dir2}',
+                    ko: '${dir1}/${dir2}부터',
                 },
                 north: Outputs.north,
                 east: Outputs.east,
@@ -1029,12 +1011,12 @@ Options.Triggers.push({
             },
         },
         {
-            id: 'P4S Act 2 Color Collector',
+            id: 'P4S Act Headmarker Collector',
             type: 'HeadMarker',
             netRegex: NetRegexes.headMarker({}),
-            condition: (data) => data.act === '2',
+            condition: (data) => data.act !== undefined,
             run: (data, matches) => {
-                data.actTwoHeadMarkers[matches.target] = getHeadmarkerId(data, matches, orangeMarker);
+                data.actHeadmarkers[matches.target] = getHeadmarkerId(data, matches, orangeMarker);
             },
         },
         {
@@ -1047,9 +1029,9 @@ Options.Triggers.push({
                 if (matches.target !== data.me && matches.source !== data.me)
                     return;
                 // Only the healer gets a purple headmarker, and the tethered tank does not.
-                const id = (_a = data.actTwoHeadMarkers[matches.source]) !== null && _a !== void 0 ? _a : data.actTwoHeadMarkers[matches.target];
+                const id = (_a = data.actHeadmarkers[matches.source]) !== null && _a !== void 0 ? _a : data.actHeadmarkers[matches.target];
                 if (id === undefined) {
-                    console.error(`Act 2 Tether: missing headmarker: ${JSON.stringify(data.actTwoHeadMarkers)}`);
+                    console.error(`Act 2 Tether: missing headmarker: ${JSON.stringify(data.actHeadmarkers)}`);
                     return;
                 }
                 const other = data.ShortName(matches.target === data.me ? matches.source : matches.target);
@@ -1062,35 +1044,118 @@ Options.Triggers.push({
             outputStrings: {
                 purpleTether: {
                     en: 'Purple (with ${player})',
+                    de: 'Lila (mit ${player})',
                     fr: 'Violet (avec ${player})',
+                    ja: 'ダージャ (${player})',
+                    ko: '다쟈 (${player})',
                 },
                 orangeTether: {
                     en: 'Fire (with ${player})',
+                    de: 'Feuer (mit ${player})',
                     fr: 'Feu (avec ${player})',
+                    ja: 'ファイガ (${player})',
+                    ko: '파이가 (${player})',
                 },
                 greenTether: {
                     en: 'Air (with ${player})',
+                    de: 'Luft (mit ${player})',
                     fr: 'Air (avec ${player})',
+                    ja: 'エアロガ (${player})',
+                    ko: '에어로가 (${player})',
                 },
             },
         },
         {
-            id: 'P4S Color Headmarkers',
-            type: 'HeadMarker',
-            netRegex: NetRegexes.headMarker({}),
-            condition: (data) => data.act !== '2',
+            id: 'P4S Act 4 Color Tether',
+            type: 'Tether',
+            // Tether comes after the headmarker color.
+            netRegex: NetRegexes.tether({ id: '00A[CD]', source: 'Hesperos' }),
+            netRegexDe: NetRegexes.tether({ id: '00A[CD]', source: 'Hesperos' }),
+            netRegexFr: NetRegexes.tether({ id: '00A[CD]', source: 'Hespéros' }),
+            netRegexJa: NetRegexes.tether({ id: '00A[CD]', source: 'ヘスペロス' }),
+            condition: (data, matches) => data.act === '4' && matches.target === data.me,
+            durationSeconds: (data, matches) => data.actHeadmarkers[matches.target] === '012D' ? 12 : 9,
+            suppressSeconds: 9999,
+            promise: async (data, matches) => {
+                const result = await callOverlayHandler({
+                    call: 'getCombatants',
+                    ids: [parseInt(matches.sourceId, 16)],
+                });
+                const myThorn = result.combatants[0];
+                if (!myThorn) {
+                    console.error(`Act 4 Tether: null data`);
+                    return;
+                }
+                data.actFourThorn = myThorn;
+            },
             response: (data, matches, output) => {
+                let _a;
                 // cactbot-builtin-response
-                output.responseOutputStrings = tetherOutputStrings;
-                const id = getHeadmarkerId(data, matches, orangeMarker);
-                const headMarkers = {
-                    '012C': output.blueTether(),
-                    '012D': output.purpleTether(),
-                    '012E': output.greenTether(),
-                    '012F': output.orangeTether(),
+                output.responseOutputStrings = {
+                    blueTether: {
+                        en: 'Blue Tether',
+                        de: 'Blaue Verbindung',
+                        fr: 'Lien bleu',
+                        ja: 'ワタガ (青)',
+                        cn: '蓝标连线',
+                        ko: '워터가 (파랑)',
+                    },
+                    purpleTether: {
+                        en: 'Purple Tether',
+                        de: 'Lila Verbindung',
+                        fr: 'lien violet',
+                        ja: 'ダージャ(紫)',
+                        cn: '紫标连线',
+                        ko: '다쟈 (자주색)',
+                    },
+                    blueTetherDir: {
+                        en: 'Blue Tether (${dir})',
+                        de: 'Blaue Verbindung (${dir})',
+                    },
+                    purpleTetherDir: {
+                        en: 'Purple Tether (${dir})',
+                        de: 'Lilane Verbindung (${dir})',
+                    },
+                    dirN: Outputs.dirN,
+                    dirNE: Outputs.dirNE,
+                    dirE: Outputs.dirE,
+                    dirSE: Outputs.dirSE,
+                    dirS: Outputs.dirS,
+                    dirSW: Outputs.dirSW,
+                    dirW: Outputs.dirW,
+                    dirNW: Outputs.dirNW,
+                    unknown: Outputs.unknown,
                 };
-                if (matches.target === data.me)
-                    return { infoText: headMarkers[id] };
+                const id = data.actHeadmarkers[matches.target];
+                if (id === undefined)
+                    return;
+                if (data.actFourThorn === undefined) {
+                    if (id === '012C')
+                        return { infoText: output.blueTether() };
+                    if (id === '012D')
+                        return { alertText: output.purpleTether() };
+                    return;
+                }
+                const centerX = 100;
+                const centerY = 100;
+                const x = data.actFourThorn.PosX - centerX;
+                const y = data.actFourThorn.PosY - centerY;
+                // Dirs: N = 0, NE = 1, ..., NW = 7
+                const thornDir = Math.round(4 - 4 * Math.atan2(x, y) / Math.PI) % 8;
+                const dirStr = (_a = {
+                    0: output.dirN(),
+                    1: output.dirNE(),
+                    2: output.dirE(),
+                    3: output.dirSE(),
+                    4: output.dirS(),
+                    5: output.dirSW(),
+                    6: output.dirW(),
+                    7: output.dirNW(),
+                }[thornDir]) !== null && _a !== void 0 ? _a : output.unknown();
+                if (id === '012C')
+                    return { infoText: output.blueTetherDir({ dir: dirStr }) };
+                if (id === '012D')
+                    return { alertText: output.purpleTetherDir({ dir: dirStr }) };
             },
         },
         {
@@ -1133,7 +1198,9 @@ Options.Triggers.push({
                     en: 'Bait Jump ${dir1} first',
                     de: 'Köder Sprung ${dir1} zuerst',
                     fr: 'Attirez le saut à l\'${dir1} en premier',
+                    ja: 'ジャンプ誘導: ${dir1}',
                     cn: '引导跳跃 先去 ${dir1}',
+                    ko: '점프 유도: ${dir1}',
                 },
                 east: Outputs.east,
                 west: Outputs.west,
