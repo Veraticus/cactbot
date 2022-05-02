@@ -16,6 +16,10 @@ const headmarkers = {
   'sword2': '0033',
   // vfx/lockon/eff/r1fz_holymeteo_s12x.avfx
   'meteor': '011D',
+  // vfx/lockon/eff/r1fz_lockon_num01_s5x.avfx through num03
+  'dot1': '013F',
+  'dot2': '0140',
+  'dot3': '0141',
 };
 const firstMarker = {
   'doorboss': headmarkers.hyperdimensionalSlash,
@@ -318,10 +322,12 @@ Options.Triggers.push({
       'locale': 'en',
       'replaceText': {
         'Empty Dimension/Full Dimension': 'Empty/Full Dimension',
+        'Lash and Gnash/Gnash and Lash': 'Lash and Gnash',
       },
     },
     {
       'locale': 'de',
+      'missingTranslations': true,
       'replaceSync': {
         'King Thordan': 'Thordan',
         'Ser Adelphel': 'Adelphel',
@@ -369,6 +375,7 @@ Options.Triggers.push({
     },
     {
       'locale': 'fr',
+      'missingTranslations': true,
       'replaceSync': {
         'King Thordan': 'roi Thordan',
         'Ser Adelphel': 'sire Adelphel',
@@ -416,6 +423,7 @@ Options.Triggers.push({
     },
     {
       'locale': 'ja',
+      'missingTranslations': true,
       'replaceSync': {
         'King Thordan': '騎神トールダン',
         'Ser Adelphel': '聖騎士アデルフェル',
