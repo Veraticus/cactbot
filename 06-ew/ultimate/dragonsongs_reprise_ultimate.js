@@ -69,6 +69,7 @@ Options.Triggers.push({
   initData: () => {
     return {
       phase: 'doorboss',
+      firstAdelphelJump: true,
     };
   },
   triggers: [
@@ -140,6 +141,7 @@ Options.Triggers.push({
           en: 'In + Tank Tether',
           de: 'Rein + Tank-Verbindung',
           fr: 'Intérieur + Liens tanks',
+          ko: '안으로 + 탱커 선 가로채기',
         },
         in: Outputs.in,
       },
@@ -164,6 +166,7 @@ Options.Triggers.push({
       netRegexJa: NetRegexes.startsUsing({ id: '62DC', source: '聖騎士グリノー', capture: false }),
       netRegexCn: NetRegexes.startsUsing({ id: '62DC', source: '圣骑士格里诺', capture: false }),
       netRegexKo: NetRegexes.startsUsing({ id: '62DC', source: '성기사 그리노', capture: false }),
+      condition: (data) => data.phase !== 'doorboss' || data.adelphelDir === undefined,
       response: Responses.knockback(),
     },
     {
@@ -181,13 +184,13 @@ Options.Triggers.push({
           en: 'Slash on YOU',
           de: 'Schlag auf DIR',
           fr: 'Slash sur VOUS',
+          ko: '고차원 대상자',
         },
       },
     },
     {
-      id: 'DSR Adelphel Charge Start Direction',
+      id: 'DSR Adelphel ID Tracker',
       // 62D2 Is Ser Adelphel's Holy Bladedance, casted once during the encounter
-      // Adelphel is in position about 29~30 seconds later
       type: 'Ability',
       netRegex: NetRegexes.ability({ id: '62D2', source: 'Ser Adelphel' }),
       netRegexDe: NetRegexes.ability({ id: '62D2', source: 'Adelphel' }),
@@ -195,14 +198,22 @@ Options.Triggers.push({
       netRegexJa: NetRegexes.ability({ id: '62D2', source: '聖騎士アデルフェル' }),
       netRegexCn: NetRegexes.ability({ id: '62D2', source: '圣骑士阿代尔斐尔' }),
       netRegexKo: NetRegexes.ability({ id: '62D2', source: '성기사 아델펠' }),
-      condition: (data) => data.phase === 'doorboss',
-      delaySeconds: 29.5,
+      run: (data, matches) => data.adelphelId = matches.sourceId,
+    },
+    {
+      id: 'DSR Adelphel KB Direction',
+      type: 'NameToggle',
+      netRegex: NetRegexes.nameToggle({ toggle: '01' }),
+      condition: (data, matches) => data.phase === 'doorboss' && matches.id === data.adelphelId && data.firstAdelphelJump,
+      // Delay 0.1s here to prevent any race condition issues with getCombatants
+      delaySeconds: 0.1,
       promise: async (data, matches) => {
+        data.firstAdelphelJump = false;
         // Select Ser Adelphel
         let adelphelData = null;
         adelphelData = await callOverlayHandler({
           call: 'getCombatants',
-          ids: [parseInt(matches.sourceId, 16)],
+          ids: [parseInt(matches.id, 16)],
         });
         // if we could not retrieve combatant data, the
         // trigger will not work, so just resume promise here
@@ -226,19 +237,18 @@ Options.Triggers.push({
         data.adelphelDir = matchedPositionTo4Dir(adelphel);
       },
       infoText: (data, _matches, output) => {
-        // Map of directions
+        // Map of directions, reversed to call out KB direction
         const dirs = {
-          0: output.north(),
-          1: output.east(),
-          2: output.south(),
-          3: output.west(),
+          0: output.south(),
+          1: output.west(),
+          2: output.north(),
+          3: output.east(),
           4: output.unknown(),
         };
         return output.adelphelLocation({
           dir: dirs[data.adelphelDir ?? 4],
         });
       },
-      run: (data) => delete data.adelphelDir,
       outputStrings: {
         north: Outputs.north,
         east: Outputs.east,
@@ -246,9 +256,51 @@ Options.Triggers.push({
         west: Outputs.west,
         unknown: Outputs.unknown,
         adelphelLocation: {
-          en: '${dir} Adelphel',
-          de: '${dir} Adelphel',
+          en: 'Go ${dir} (knockback)',
+          de: 'Geh ${dir} (Rückstoß)',
+          cn: '去 ${dir} (击退)',
+          ko: '${dir} (넉백)',
         },
+      },
+    },
+    {
+      id: 'DSR Adelphel Move Direction',
+      type: 'Ability',
+      netRegex: NetRegexes.ability({ id: '62CE', source: 'Ser Adelphel' }),
+      netRegexDe: NetRegexes.ability({ id: '62CE', source: 'Adelphel' }),
+      netRegexFr: NetRegexes.ability({ id: '62CE', source: 'Sire Adelphel' }),
+      netRegexJa: NetRegexes.ability({ id: '62CE', source: '聖騎士アデルフェル' }),
+      netRegexCn: NetRegexes.ability({ id: '62CE', source: '圣骑士阿代尔斐尔' }),
+      netRegexKo: NetRegexes.ability({ id: '62CE', source: '성기사 아델펠' }),
+      suppressSeconds: 10,
+      infoText: (data, matches, output) => {
+        const heading = parseFloat(matches.heading);
+        // There's probably a better way to handle this...
+        switch (data.adelphelDir) {
+          case 0: // North
+            if (heading < 0)
+              return output.left();
+            return output.right();
+          case 1: // East
+            if (heading < -1.57)
+              return output.left();
+            return output.right();
+          case 2: // South
+            if (heading > 0)
+              return output.left();
+            return output.right();
+          case 3: // West
+            if (heading > 1.57)
+              return output.left();
+            return output.right();
+        }
+        return output.unknown();
+      },
+      run: (data) => delete data.adelphelDir,
+      outputStrings: {
+        left: Outputs.left,
+        right: Outputs.right,
+        unknown: Outputs.unknown,
       },
     },
     {
@@ -272,21 +324,25 @@ Options.Triggers.push({
           en: 'Red Circle',
           de: 'Roter Kreis',
           fr: 'Cercle rouge',
+          ko: '빨강 원형징',
         },
         triangle: {
           en: 'Green Triangle',
           de: 'Grünes Dreieck',
           fr: 'Triangle vert',
+          ko: '초록 세모징',
         },
         square: {
           en: 'Purple Square',
           de: 'Lilanes Viereck',
           fr: 'Carré violet',
+          ko: '보라 네모징',
         },
         x: {
           en: 'Blue X',
           de: 'Blaues X',
           fr: 'Croix bleue',
+          ko: '블루 X징',
         },
       },
     },
@@ -508,6 +564,7 @@ Options.Triggers.push({
         thordanLocation: {
           en: '${dir} Thordan',
           de: '${dir} Thordan',
+          ko: '토르당 ${dir}',
         },
       },
     },
@@ -526,6 +583,7 @@ Options.Triggers.push({
           en: 'Leap on YOU',
           de: 'Sprung auf DIR',
           fr: 'Saut sur VOUS',
+          ko: '광역 대상자',
         },
       },
     },
@@ -612,10 +670,12 @@ Options.Triggers.push({
         clockwise: {
           en: 'Clockwise',
           de: 'Im Uhrzeigersinn',
+          ko: '시계방향',
         },
         counterclock: {
           en: 'Counterclockwise',
           de: 'Gegen den Uhrzeigersinn',
+          ko: '반시계방향',
         },
         unknown: Outputs.unknown,
       },
@@ -636,10 +696,12 @@ Options.Triggers.push({
         sword1: {
           en: '1',
           de: '1',
+          ko: '1',
         },
         sword2: {
           en: '2',
           de: '2',
+          ko: '2',
         },
       },
     },
@@ -674,11 +736,13 @@ Options.Triggers.push({
           en: 'Tank/Healer Meteors',
           de: 'Tank/Heiler Meteore',
           fr: 'Météores Tank/Healer',
+          ko: '탱/힐 메테오',
         },
         dpsMeteors: {
           en: 'DPS Meteors',
           de: 'DDs Meteore',
           fr: 'Météores DPS',
+          ko: '딜러 메테오',
         },
       },
     },
