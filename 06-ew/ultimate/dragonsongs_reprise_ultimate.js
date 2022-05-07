@@ -70,6 +70,8 @@ Options.Triggers.push({
     return {
       phase: 'doorboss',
       firstAdelphelJump: true,
+      diveFromGraceNum: {},
+      diveFromGraceHasArrow: { 1: false, 2: false, 3: false },
     };
   },
   triggers: [
@@ -249,6 +251,7 @@ Options.Triggers.push({
           dir: dirs[data.adelphelDir ?? 4],
         });
       },
+      run: (data) => delete data.adelphelDir,
       outputStrings: {
         north: Outputs.north,
         east: Outputs.east,
@@ -261,46 +264,6 @@ Options.Triggers.push({
           cn: '去 ${dir} (击退)',
           ko: '${dir} (넉백)',
         },
-      },
-    },
-    {
-      id: 'DSR Adelphel Move Direction',
-      type: 'Ability',
-      netRegex: NetRegexes.ability({ id: '62CE', source: 'Ser Adelphel' }),
-      netRegexDe: NetRegexes.ability({ id: '62CE', source: 'Adelphel' }),
-      netRegexFr: NetRegexes.ability({ id: '62CE', source: 'Sire Adelphel' }),
-      netRegexJa: NetRegexes.ability({ id: '62CE', source: '聖騎士アデルフェル' }),
-      netRegexCn: NetRegexes.ability({ id: '62CE', source: '圣骑士阿代尔斐尔' }),
-      netRegexKo: NetRegexes.ability({ id: '62CE', source: '성기사 아델펠' }),
-      suppressSeconds: 10,
-      infoText: (data, matches, output) => {
-        const heading = parseFloat(matches.heading);
-        // There's probably a better way to handle this...
-        switch (data.adelphelDir) {
-          case 0: // North
-            if (heading < 0)
-              return output.left();
-            return output.right();
-          case 1: // East
-            if (heading < -1.57)
-              return output.left();
-            return output.right();
-          case 2: // South
-            if (heading > 0)
-              return output.left();
-            return output.right();
-          case 3: // West
-            if (heading > 1.57)
-              return output.left();
-            return output.right();
-        }
-        return output.unknown();
-      },
-      run: (data) => delete data.adelphelDir,
-      outputStrings: {
-        left: Outputs.left,
-        right: Outputs.right,
-        unknown: Outputs.unknown,
       },
     },
     {
@@ -773,6 +736,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Behind => Right',
+          de: 'Hinter ihn => Rechts',
         },
       },
     },
@@ -789,6 +753,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Behind => Left',
+          de: 'Hinter ihn => Links',
         },
       },
     },
@@ -796,6 +761,11 @@ Options.Triggers.push({
       id: 'DSR Gnash and Lash',
       type: 'StartsUsing',
       netRegex: NetRegexes.startsUsing({ id: '6712', source: 'Nidhogg', capture: false }),
+      netRegexDe: NetRegexes.startsUsing({ id: '6712', source: 'Nidhogg', capture: false }),
+      netRegexFr: NetRegexes.startsUsing({ id: '6712', source: 'Nidhogg', capture: false }),
+      netRegexJa: NetRegexes.startsUsing({ id: '6712', source: 'ニーズヘッグ', capture: false }),
+      netRegexCn: NetRegexes.startsUsing({ id: '6712', source: '尼德霍格', capture: false }),
+      netRegexKo: NetRegexes.startsUsing({ id: '6712', source: '니드호그', capture: false }),
       durationSeconds: 8,
       response: Responses.getOutThenIn(),
     },
@@ -803,6 +773,11 @@ Options.Triggers.push({
       id: 'DSR Lash and Gnash',
       type: 'StartsUsing',
       netRegex: NetRegexes.startsUsing({ id: '6713', source: 'Nidhogg', capture: false }),
+      netRegexDe: NetRegexes.startsUsing({ id: '6713', source: 'Nidhogg', capture: false }),
+      netRegexFr: NetRegexes.startsUsing({ id: '6713', source: 'Nidhogg', capture: false }),
+      netRegexJa: NetRegexes.startsUsing({ id: '6713', source: 'ニーズヘッグ', capture: false }),
+      netRegexCn: NetRegexes.startsUsing({ id: '6713', source: '尼德霍格', capture: false }),
+      netRegexKo: NetRegexes.startsUsing({ id: '6713', source: '니드호그', capture: false }),
       durationSeconds: 8,
       response: Responses.getInThenOut(),
     },
@@ -812,6 +787,11 @@ Options.Triggers.push({
       // 6715 = Gnashing Wheel
       // 6716 = Lashing Wheel
       netRegex: NetRegexes.ability({ id: ['6715', '6716'], source: 'Nidhogg' }),
+      netRegexDe: NetRegexes.ability({ id: ['6715', '6716'], source: 'Nidhogg' }),
+      netRegexFr: NetRegexes.ability({ id: ['6715', '6716'], source: 'Nidhogg' }),
+      netRegexJa: NetRegexes.ability({ id: ['6715', '6716'], source: 'ニーズヘッグ' }),
+      netRegexCn: NetRegexes.ability({ id: ['6715', '6716'], source: '尼德霍格' }),
+      netRegexKo: NetRegexes.ability({ id: ['6715', '6716'], source: '니드호그' }),
       // These are ~3s apart.  Only call after the first (and ignore multiple people getting hit).
       suppressSeconds: 6,
       infoText: (_data, matches, output) => matches.id === '6715' ? output.in() : output.out(),
@@ -824,12 +804,102 @@ Options.Triggers.push({
       id: 'DSR Darkdragon Dive Single Tower',
       type: 'Ability',
       netRegex: NetRegexes.ability({ id: '6711', source: 'Nidhogg' }),
+      netRegexDe: NetRegexes.ability({ id: '6711', source: 'Nidhogg' }),
+      netRegexFr: NetRegexes.ability({ id: '6711', source: 'Nidhogg' }),
+      netRegexJa: NetRegexes.ability({ id: '6711', source: 'ニーズヘッグ' }),
+      netRegexCn: NetRegexes.ability({ id: '6711', source: '尼德霍格' }),
+      netRegexKo: NetRegexes.ability({ id: '6711', source: '니드호그' }),
       condition: Conditions.targetIsYou(),
       suppressSeconds: 1,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
           en: 'Bait',
+          de: 'Ködern',
+        },
+      },
+    },
+    {
+      id: 'DSR Dive From Grace Number',
+      // This comes out ~5s before symbols.
+      type: 'HeadMarker',
+      netRegex: NetRegexes.headMarker(),
+      infoText: (data, matches, output) => {
+        const id = getHeadmarkerId(data, matches);
+        if (id === headmarkers.dot1) {
+          data.diveFromGraceNum[matches.target] = 1;
+          if (matches.target === data.me)
+            return output.num1();
+        } else if (id === headmarkers.dot2) {
+          data.diveFromGraceNum[matches.target] = 2;
+          if (matches.target === data.me)
+            return output.num2();
+        } else if (id === headmarkers.dot3) {
+          data.diveFromGraceNum[matches.target] = 3;
+          if (matches.target === data.me)
+            return output.num3();
+        }
+      },
+      outputStrings: {
+        num1: Outputs.num1,
+        num2: Outputs.num2,
+        num3: Outputs.num3,
+      },
+    },
+    {
+      id: 'DSR Dive From Grace Dir Collect',
+      type: 'GainsEffect',
+      // AC3 = High Jump Target
+      // AC4 = Spineshatter Dive Target
+      // AC5 = Elusive Jump Target
+      // This only matches on non-circles.
+      netRegex: NetRegexes.gainsEffect({ effectId: ['AC4', 'AC5'] }),
+      run: (data, matches) => {
+        const duration = parseFloat(matches.duration);
+        // These come out in 9, 19, 30 seconds.
+        if (duration < 15)
+          data.diveFromGraceHasArrow[1] = true;
+        else if (duration < 25)
+          data.diveFromGraceHasArrow[2] = true;
+        else
+          data.diveFromGraceHasArrow[3] = true;
+      },
+    },
+    {
+      id: 'DSR Dive From Grace Dir You',
+      type: 'GainsEffect',
+      // AC3 = High Jump Target
+      // AC4 = Spineshatter Dive Target
+      // AC5 = Elusive Jump Target
+      netRegex: NetRegexes.gainsEffect({ effectId: ['AC3', 'AC4', 'AC5'] }),
+      condition: Conditions.targetIsYou(),
+      delaySeconds: 0.5,
+      alertText: (data, matches, output) => {
+        const num = data.diveFromGraceNum[data.me];
+        if (!num) {
+          console.error(`DFGYou: missing number: ${JSON.stringify(data.diveFromGraceNum)}`);
+          return;
+        }
+        if (matches.effectId === 'AC4')
+          return output.upArrow({ num: num });
+        else if (matches.effectId === 'AC5')
+          return output.downArrow({ num: num });
+        if (data.diveFromGraceHasArrow[num])
+          return output.circleWithArrows({ num: num });
+        return output.circleAllCircles({ num: num });
+      },
+      outputStrings: {
+        circleAllCircles: {
+          en: '#${num} All Circles',
+        },
+        circleWithArrows: {
+          en: '#${num} Circle (with arrows)',
+        },
+        upArrow: {
+          en: '#${num} Up Arrow',
+        },
+        downArrow: {
+          en: '#${num} Down Arrow',
         },
       },
     },
