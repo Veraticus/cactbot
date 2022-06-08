@@ -1700,6 +1700,7 @@ Options.Triggers.push({
     },
     {
       id: 'DSR Hallowed Wings and Plume',
+      // Calls left and right while looking at Hraesvelgr.
       // 6D23 Head Down, Left Wing
       // 6D24 Head Up, Left Wing
       // 6D26 Head Down, Right Wing
@@ -1713,19 +1714,19 @@ Options.Triggers.push({
         let wings;
         switch (matches.id) {
           case '6D23':
-            wings = output.right();
+            wings = output.left();
             head = data.role === 'tank' ? output.near() : output.far();
             break;
           case '6D24':
-            wings = output.right();
+            wings = output.left();
             head = data.role === 'tank' ? output.far() : output.near();
             break;
           case '6D26':
-            wings = output.left();
+            wings = output.right();
             head = data.role === 'tank' ? output.near() : output.far();
             break;
           case '6D27':
-            wings = output.left();
+            wings = output.right();
             head = data.role === 'tank' ? output.far() : output.near();
             break;
         }
@@ -1766,7 +1767,7 @@ Options.Triggers.push({
       // Lasts 10.96s, but bosses do not cast Cauterize until 7.5s after debuff
       delaySeconds: (_data, matches) => parseFloat(matches.duration) - 6,
       infoText: (_data, matches, output) => {
-        if (matches.id === 'B52')
+        if (matches.effectId === 'B52')
           return output.hraesvelgr();
         return output.nidhogg();
       },
@@ -2164,9 +2165,9 @@ Options.Triggers.push({
         'Haurchefant': 'オルシュファン',
         'Hraesvelgr': 'フレースヴェルグ',
         '(?<!Dragon-)King Thordan': '騎神トールダン',
-        'Left Eye': '竜の左眼',
+        'Left Eye': '邪竜の左眼',
         'Nidhogg': 'ニーズヘッグ',
-        'Right Eye': '竜の右眼',
+        'Right Eye': '邪竜の右眼',
         'Ser Adelphel': '聖騎士アデルフェル',
         'Ser Charibert': '聖騎士シャリベル',
         'Ser Grinnaux': '聖騎士グリノー',
