@@ -47,6 +47,8 @@ Options.Triggers.push({
         text: {
           en: 'Out and Away',
           de: 'Raus und Weg',
+          fr: 'Extérieur et derrière',
+          ja: '外へ',
         },
       },
     },
@@ -72,6 +74,8 @@ Options.Triggers.push({
         text: {
           en: 'Wall',
           de: 'Wand',
+          fr: 'Mur',
+          ja: '壁へ',
         },
       },
     },
@@ -141,6 +145,7 @@ Options.Triggers.push({
           en: 'Bait Middle => Out (Spread)',
           de: 'In der Mitte Ködern => Raus (verteilen)',
           fr: 'Posez au centre -> Écartez-vous à l\'extérieur',
+          ja: '真ん中で誘導 => 8方向散開',
           cn: '中间集合然后八方分散',
         },
       },
@@ -158,6 +163,7 @@ Options.Triggers.push({
           en: 'Brutal Rush tether on You',
           de: 'Grausame Hatz Verbindung auf DIR',
           fr: 'Lien de Ruée brutale sur VOUS',
+          ja: '自分に突進',
           cn: '拳击点名',
         },
       },
@@ -196,6 +202,8 @@ Options.Triggers.push({
         partnerStack: {
           en: 'Partner Stack',
           de: 'Mit Partner sammeln',
+          fr: 'Package partenaire',
+          ja: '2人で頭割り',
         },
       },
     },
@@ -215,6 +223,8 @@ Options.Triggers.push({
         partnerStack: {
           en: 'Partner Stack (unmarked)',
           de: 'Mit Partner sammeln (nicht markiert)',
+          fr: 'Package partenaire (sans marque)',
+          ja: '2人で頭割り (マーカーなし)',
         },
       },
     },
@@ -326,6 +336,10 @@ Options.Triggers.push({
         'Stiff Breeze': 'Föhn',
       },
       'replaceText': {
+        'ground': 'Boden',
+        'line': 'Linie',
+        'donut': 'Donut',
+        'protean': 'Himmelsrichtungen',
         'Blow Away': 'Hauerwelle',
         'Blustery Ruler': 'Tosende Herrin',
         'Bold Boulder': 'Feister Fels',

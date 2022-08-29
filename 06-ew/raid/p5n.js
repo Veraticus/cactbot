@@ -22,6 +22,8 @@ Options.Triggers.push({
         goFrontAvoid: {
           en: 'Go Front (avoid puddle)',
           de: 'Geh nach Vorne (weiche Flächen aus)',
+          fr: 'Allez devant (Évitez les zones au sol)',
+          ja: '前へ (ゆか回避)',
         },
       },
     },
@@ -65,6 +67,8 @@ Options.Triggers.push({
         getInEmptyTile: {
           en: 'Get in empty tile (no stones)',
           de: 'Geh ins leere Feld (ohne Stein)',
+          fr: 'Allez dans une case vide (sans pierres)',
+          ja: '石がないマスへ',
         },
         moveAway: {
           en: 'Move away from puddles',
@@ -122,6 +126,8 @@ Options.Triggers.push({
         text: {
           en: 'Start in empty tile -> move to first tile',
           de: 'Starte im leeren Feld -> in das erste Feld bewegen',
+          fr: 'Démarrez sur une case vide -> aller vers la 1ère case',
+          ja: '何もないマス -> 1回目のマスへ',
         },
       },
     },
@@ -137,6 +143,8 @@ Options.Triggers.push({
         text: {
           en: 'Start in middle -> move to first jump',
           de: 'Starte in der Mitte -> zum ersten Sprung bewegen',
+          fr: 'Démarrez au milieu -> allez vers le 1er saut',
+          ja: '真ん中 -> 1回目の場所へ',
         },
       },
     },
