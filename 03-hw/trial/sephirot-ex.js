@@ -12,7 +12,7 @@ Options.Triggers.push({
       id: 'SephirotEx Tiferet',
       regex: /Tiferet/,
       beforeSeconds: 4,
-      suppressSeconds: 2,
+      suppressSeconds: 5,
       response: Responses.aoe(),
     },
     {
@@ -37,7 +37,7 @@ Options.Triggers.push({
     {
       id: 'SephirotEx Ein Sof Ratzon',
       regex: /Ein Sof \(1 puddle\)/,
-      infoText: (_data, _matches, output) => output.text(),
+      alertText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
           en: 'Bait toward puddle',
@@ -156,19 +156,38 @@ Options.Triggers.push({
       response: Responses.moveAway('alarm'), // This *will* kill if a non-tank takes 2+.
     },
     {
-      // 3ED is Force Against Might orange, 3EE is Force Against Magic, green.
-      id: 'SephirotEx Force Against Gain',
+      id: 'SephirotEx Force Against Might',
       type: 'GainsEffect',
-      netRegex: NetRegexes.gainsEffect({ effectId: ['3ED', '3EE'] }),
+      netRegex: NetRegexes.gainsEffect({ effectId: '3ED' }),
       condition: Conditions.targetIsYou(),
       alertText: (_data, matches, output) => output.text({ force: matches.effect }),
       run: (data, matches) => data.force = matches.effectId,
       outputStrings: {
         text: {
-          en: '${force} on you',
+          en: 'Orange (${force})',
           de: '${force} auf dir',
+          fr: '${force} sur vous',
+          ja: '自分に${force}',
           cn: '${force}点名',
-          ko: '나에게 ${force}',
+          ko: '노랑 (${force})',
+        },
+      },
+    },
+    {
+      id: 'SephirotEx Force Against Magic',
+      type: 'GainsEffect',
+      netRegex: NetRegexes.gainsEffect({ effectId: '3EE' }),
+      condition: Conditions.targetIsYou(),
+      alertText: (_data, matches, output) => output.text({ force: matches.effect }),
+      run: (data, matches) => data.force = matches.effectId,
+      outputStrings: {
+        text: {
+          en: 'Green (${force})',
+          de: '${force} auf dir',
+          fr: '${force} sur vous',
+          ja: '自分に${force}',
+          cn: '${force}点名',
+          ko: '초록 (${force})',
         },
       },
     },
@@ -277,6 +296,7 @@ Options.Triggers.push({
       type: 'HeadMarker',
       netRegex: NetRegexes.headMarker({ id: '0028', capture: false }),
       delaySeconds: 0.5,
+      suppressSeconds: 1,
       alertText: (data, _matches, output) => {
         if (data.shakerTargets?.includes(data.me))
           return output.shakerTarget();
@@ -311,7 +331,7 @@ Options.Triggers.push({
       alarmText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
-          en: 'Kill Storm of Words or die',
+          en: 'Kill Storm of Words',
           de: 'Wörtersturm besiegen',
           fr: 'Tuez Tempête de mots ou mourrez',
           cn: '击杀言语风暴!',
@@ -469,10 +489,13 @@ Options.Triggers.push({
         'puddle(?:s)?': '장판',
         'Adds Spawn': '쫄 등장',
         'Ascension': '승천',
-        'Chesed': '헤세드',
-        'Da\'at': '다아트',
+        'Chesed(?! Gevurah)': '헤세드',
+        'Chesed Gevurah': '헤세드 게부라',
+        'Da\'at spread': '다아트 산개',
+        'Da\'at Tethers': '다아트 선',
         'Earth Shaker': '요동치는 대지',
-        'Ein Sof': '아인 소프',
+        'Ein Sof(?! Ohr)': '아인 소프',
+        'Ein Sof Ohr': '아인 소프 오르',
         'Fiendish Rage': '마신의 분노',
         'Fiendish Wail': '마신의 탄식',
         'Force Field': '역장',
