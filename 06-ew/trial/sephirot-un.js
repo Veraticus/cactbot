@@ -200,8 +200,8 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Orange (${force})',
-          de: '${force} auf dir',
-          fr: '${force} sur vous',
+          de: 'Orange (${force})',
+          fr: '${force} Orange',
           ja: '自分に${force}',
           cn: '${force}点名',
           ko: '노랑 (${force})',
@@ -218,8 +218,8 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Green (${force})',
-          de: '${force} auf dir',
-          fr: '${force} sur vous',
+          de: 'Grün (${force})',
+          fr: '${force} Vert',
           ja: '自分に${force}',
           cn: '${force}点名',
           ko: '초록 (${force})',
