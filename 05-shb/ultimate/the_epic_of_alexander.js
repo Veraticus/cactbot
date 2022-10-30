@@ -637,7 +637,8 @@ Options.Triggers.push({
       condition: (data, matches) => {
         // Here and elsewhere, it's probably best to check for whether the user is the target first,
         // as that should short-circuit more often.
-        return data.me === matches.target && (/00(?:4F|5[0-6])/).test(getHeadmarkerId(data, matches));
+        return data.me === matches.target &&
+          (/00(?:4F|5[0-6])/).test(getHeadmarkerId(data, matches));
       },
       preRun: (data, matches) => {
         const correctedMatch = getHeadmarkerId(data, matches);
@@ -697,7 +698,8 @@ Options.Triggers.push({
       id: 'TEA Limit Cut Knockback',
       type: 'HeadMarker',
       netRegex: {},
-      condition: (data, matches) => data.me === matches.target && (/00(?:4F|5[0-6])/).test(getHeadmarkerId(data, matches)),
+      condition: (data, matches) =>
+        data.me === matches.target && (/00(?:4F|5[0-6])/).test(getHeadmarkerId(data, matches)),
       // This gives a warning within 5 seconds, so you can hit arm's length.
       delaySeconds: (data) => data.limitCutDelay !== undefined ? data.limitCutDelay - 5 : 0,
       alertText: (data, matches, output) => {
@@ -805,7 +807,8 @@ Options.Triggers.push({
       id: 'TEA Ice Marker',
       type: 'HeadMarker',
       netRegex: {},
-      condition: (data, matches) => data.me === matches.target && getHeadmarkerId(data, matches) === '0043',
+      condition: (data, matches) =>
+        data.me === matches.target && getHeadmarkerId(data, matches) === '0043',
       alarmText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
@@ -840,7 +843,8 @@ Options.Triggers.push({
       id: 'TEA Enumeration YOU',
       type: 'HeadMarker',
       netRegex: {},
-      condition: (data, matches) => data.me === matches.target && getHeadmarkerId(data, matches) === '0041',
+      condition: (data, matches) =>
+        data.me === matches.target && getHeadmarkerId(data, matches) === '0041',
       alertText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
@@ -859,7 +863,7 @@ Options.Triggers.push({
       netRegex: {},
       condition: (data, matches) => getHeadmarkerId(data, matches) === '0041',
       preRun: (data, matches) => {
-        data.enumerations ?? (data.enumerations = []);
+        data.enumerations ??= [];
         data.enumerations.push(matches.target);
       },
       infoText: (data, _matches, output) => {
@@ -1031,7 +1035,7 @@ Options.Triggers.push({
       netRegex: { effectId: kDecreeNisi },
       run: (data, matches) => {
         const num = kDecreeNisi.indexOf(matches.effectId.toUpperCase());
-        data.nisiMap ?? (data.nisiMap = {});
+        data.nisiMap ??= {};
         data.nisiMap[matches.target] = num;
       },
     },
@@ -1040,7 +1044,7 @@ Options.Triggers.push({
       type: 'LosesEffect',
       netRegex: { effectId: kDecreeNisi },
       run: (data, matches) => {
-        data.nisiMap ?? (data.nisiMap = {});
+        data.nisiMap ??= {};
         delete data.nisiMap[matches.target];
       },
     },
@@ -1050,7 +1054,7 @@ Options.Triggers.push({
       netRegex: { effectId: kFinalJudgementNisi },
       run: (data, matches) => {
         const num = kFinalJudgementNisi.indexOf(matches.effectId.toUpperCase());
-        data.finalNisiMap ?? (data.finalNisiMap = {});
+        data.finalNisiMap ??= {};
         data.finalNisiMap[matches.target] = num;
       },
     },
@@ -1148,7 +1152,7 @@ Options.Triggers.push({
       // Aggravated Assault, Shared Sentence, House Arrest, Restraining Order.
       netRegex: { effectId: '46[1234]' },
       run: (data, matches) => {
-        data.buffMap ?? (data.buffMap = {});
+        data.buffMap ??= {};
         // The values are for debugging; the logic is just about presence in the map.
         data.buffMap[matches.target] = matches.effect;
       },
@@ -1300,7 +1304,8 @@ Options.Triggers.push({
       id: 'TEA Judgment Crystal',
       type: 'HeadMarker',
       netRegex: {},
-      condition: (data, matches) => data.me === matches.target && getHeadmarkerId(data, matches) === '0060',
+      condition: (data, matches) =>
+        data.me === matches.target && getHeadmarkerId(data, matches) === '0060',
       alertText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
@@ -1354,7 +1359,7 @@ Options.Triggers.push({
       netRegex: { effectId: '2B7' },
       condition: (data) => data.phase === 'inception',
       run: (data, matches) => {
-        data.vuln ?? (data.vuln = {});
+        data.vuln ??= {};
         data.vuln[matches.target] = true;
       },
     },
@@ -1365,7 +1370,7 @@ Options.Triggers.push({
       netRegex: { source: 'Alexander Prime', id: '485F', capture: false },
       condition: (data) => data.phase === 'inception',
       alarmText: (data, _matches, output) => {
-        data.vuln ?? (data.vuln = {});
+        data.vuln ??= {};
         const numVulns = Object.keys(data.vuln).length;
         if (data.role === 'tank' && data.vuln[data.me] && numVulns >= 5) {
           // If you're stacking three people in the shared sentence,
@@ -1375,7 +1380,7 @@ Options.Triggers.push({
         }
       },
       alertText: (data, _matches, output) => {
-        data.vuln ?? (data.vuln = {});
+        data.vuln ??= {};
         if (data.vuln[data.me])
           return;
         const numVulns = Object.keys(data.vuln).length;
@@ -1387,7 +1392,7 @@ Options.Triggers.push({
         return output.baitSwordOrJump();
       },
       infoText: (data, _matches, output) => {
-        data.vuln ?? (data.vuln = {});
+        data.vuln ??= {};
         if (data.vuln[data.me]) {
           // Tanks covered in the alarmText case above.
           const numVulns = Object.keys(data.vuln).length;
@@ -1673,7 +1678,7 @@ Options.Triggers.push({
       netRegex: {},
       condition: (data, matches) => getHeadmarkerId(data, matches) === '003E',
       preRun: (data, matches) => {
-        data.opticalStack ?? (data.opticalStack = []);
+        data.opticalStack ??= [];
         data.opticalStack.push(matches.target);
       },
       alertText: (data, matches, output) => {
@@ -1681,7 +1686,7 @@ Options.Triggers.push({
           return output.stackOnYou();
       },
       infoText: (data, _matches, output) => {
-        data.opticalStack ?? (data.opticalStack = []);
+        data.opticalStack ??= [];
         if (data.opticalStack.length === 1)
           return;
         const names = data.opticalStack.map((x) => data.ShortName(x)).sort();
@@ -1821,7 +1826,7 @@ Options.Triggers.push({
       type: 'Tether',
       netRegex: { id: '0062' },
       run: (data, matches) => {
-        data.tetherBois ?? (data.tetherBois = {});
+        data.tetherBois ??= {};
         data.tetherBois[matches.targetId] = matches.source;
       },
     },
@@ -1833,7 +1838,7 @@ Options.Triggers.push({
       delaySeconds: 1,
       suppressSeconds: 10,
       run: (data) => {
-        const tetherBois = data.tetherBois ?? (data.tetherBois = {});
+        const tetherBois = data.tetherBois ??= {};
         // Let your actor id memes be dreams.
         // If you sort the actor ids of the clones, this will tell you what you have.
         // If anybody is dead, they will fill in from the lowest.
@@ -2135,7 +2140,7 @@ Options.Triggers.push({
       delaySeconds: 1,
       suppressSeconds: 10,
       run: (data) => {
-        const tetherBois = data.tetherBois ?? (data.tetherBois = {});
+        const tetherBois = data.tetherBois ??= {};
         // See notes in TEA Alpha Instructions about what's going on here.
         const sortedIds = Object.keys(tetherBois).sort().reverse();
         const sortedNames = sortedIds.map((x) => tetherBois[x]);
@@ -2415,7 +2420,7 @@ Options.Triggers.push({
         const y = Math.round(parseFloat(matches.y));
         if (x !== 100)
           return;
-        data.trine ?? (data.trine = []);
+        data.trine ??= [];
         // See: https://imgur.com/a/l1n9MhS
         const trineMap = {
           92: 'r',
@@ -2427,7 +2432,7 @@ Options.Triggers.push({
           return;
         data.trine.push(thisTrine);
         // Call out after two, because that's when the mechanic is fully known.
-        data.trine ?? (data.trine = []);
+        data.trine ??= [];
         if (data.trine.length !== 2)
           return;
         // Find the third one based on the first two.

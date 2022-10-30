@@ -288,7 +288,8 @@ Options.Triggers.push({
           data.phaserOutputs = ['out', 'healerStacks', 'sides'];
       },
       durationSeconds: 15,
-      infoText: (data, _matches, output) => data.phaserOutputs?.map((key) => output[key]()).join(' -> '),
+      infoText: (data, _matches, output) =>
+        data.phaserOutputs?.map((key) => output[key]()).join(' -> '),
       run: (data) => data.phaserOutputs?.shift(),
       outputStrings: phaserOutputStrings,
     },
@@ -327,7 +328,8 @@ Options.Triggers.push({
           data.phaserOutputs = ['sides', 'healerStacks', 'out'];
       },
       durationSeconds: 15,
-      infoText: (data, _matches, output) => data.phaserOutputs?.map((key) => output[key]()).join(' -> '),
+      infoText: (data, _matches, output) =>
+        data.phaserOutputs?.map((key) => output[key]()).join(' -> '),
       run: (data) => data.phaserOutputs?.shift(),
       outputStrings: phaserOutputStrings,
     },
@@ -441,7 +443,8 @@ Options.Triggers.push({
         const output = data.artOfDarknessIdMap[matches.id];
         return output === 'goRight' || output === 'goLeft';
       },
-      run: (data, matches) => data.artOfDarkness?.push(data.artOfDarknessIdMap?.[matches.id] ?? 'unknown'),
+      run: (data, matches) =>
+        data.artOfDarkness?.push(data.artOfDarknessIdMap?.[matches.id] ?? 'unknown'),
     },
     {
       // Fire the trigger on stack or protean since we want the callout as soon as possible.
@@ -454,7 +457,8 @@ Options.Triggers.push({
         const output = data.artOfDarknessIdMap[matches.id];
         return output === 'stackWithPartner' || output === 'protean';
       },
-      preRun: (data, matches) => data.artOfDarkness?.push(data.artOfDarknessIdMap?.[matches.id] ?? 'unknown'),
+      preRun: (data, matches) =>
+        data.artOfDarkness?.push(data.artOfDarknessIdMap?.[matches.id] ?? 'unknown'),
       durationSeconds: (data) => data.finalArtOfDarkness ? 16 : 9,
       alertText: (data, _matches, output) => {
         // Perform the callout now, regardless if it's The Second or Third Art Of Darkness

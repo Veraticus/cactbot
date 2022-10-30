@@ -68,7 +68,11 @@ const getStarText = (_data, matches, output) => {
     posY = parseFloat(matches.y);
   }
   if (posX === undefined || posY === undefined) {
-    console.error(`EndsingerEx getStarText: Could not resolve star position from heading ${parseFloat(matches.heading)}`);
+    console.error(
+      `EndsingerEx getStarText: Could not resolve star position from heading ${
+        parseFloat(matches.heading)
+      }`,
+    );
     return;
   }
   if (['6FF9', '6FFB', '7000', '7001'].includes(matches.id))
@@ -319,7 +323,11 @@ Options.Triggers.push({
         }
         // If we have the same count of mechanics stored for all 5 heads, resolve safe spot
         const heads = Object.values(data.storedHeads);
-        if (heads.length === heads.filter((h) => h.mechanics.length === head.mechanics.length).length && heads.length === 5) {
+        if (
+          heads.length ===
+            heads.filter((h) => h.mechanics.length === head.mechanics.length).length &&
+          heads.length === 5
+        ) {
           const lastMechanic = head.mechanics.length - 1;
           const safeDirHead = heads.find((h) => h.mechanics[0]?.includes('safe'));
           const donutHeads = heads.filter((h) => h.mechanics[lastMechanic] === 'donut');

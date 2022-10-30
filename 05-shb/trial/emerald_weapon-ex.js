@@ -62,7 +62,7 @@ Options.Triggers.push({
       // 9705 = Ceruleum Sphere, 9706 = Nitrosphere
       netRegex: { npcNameId: '9706' },
       condition: (data, matches) => {
-        (data.orbs ?? (data.orbs = [])).push(matches);
+        (data.orbs ??= []).push(matches);
         return data.orbs.length === 4;
       },
       alertText: (data, _matches, output) => {
@@ -223,7 +223,7 @@ Options.Triggers.push({
       type: 'HeadMarker',
       netRegex: { id: '00F[9ABC]' },
       condition: (data, matches) => {
-        (data.primusPlayers ?? (data.primusPlayers = [])).push(matches.target);
+        (data.primusPlayers ??= []).push(matches.target);
         return data.me === matches.target;
       },
       alertText: (_data, matches, output) => {
@@ -297,7 +297,7 @@ Options.Triggers.push({
       netRegex: { source: 'BitBlade', id: '55CD' },
       durationSeconds: 9,
       alertText: (data, matches, output) => {
-        (data.tertius ?? (data.tertius = [])).push(matches);
+        (data.tertius ??= []).push(matches);
         if (data.tertius.length !== 4)
           return;
         const [s0, s1, s2, s3] = data.tertius.map((sword) => {
@@ -312,7 +312,14 @@ Options.Triggers.push({
         // We know that the swords will land in all 4 corners plus twice in
         // the center areas. Predict the last two swords by removing the
         // ones we've already gotten.
-        const spawns = [output.dirNE(), output.dirNW(), output.dirSE(), output.dirSW(), output.middle(), output.middle()];
+        const spawns = [
+          output.dirNE(),
+          output.dirNW(),
+          output.dirSE(),
+          output.dirSW(),
+          output.middle(),
+          output.middle(),
+        ];
         const [s4, s5] = spawns.filter((x) => ![s0, s1, s2, s3].includes(x));
         if (!s0 || !s1 || !s2 || !s3 || !s4 || !s5)
           throw new UnreachableCode();

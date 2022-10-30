@@ -130,7 +130,9 @@ Options.Triggers.push({
         if (data.me === matches.target)
           return { alertText: output.tankLaserOnYou() };
         if (data.role === 'healer')
-          return { alertText: output.tankLaserOnPlayer({ player: data.ShortName(matches.target) }) };
+          return {
+            alertText: output.tankLaserOnPlayer({ player: data.ShortName(matches.target) }),
+          };
         return { info: output.avoidLaserOnPlayer({ player: data.ShortName(matches.target) }) };
       },
     },
@@ -160,7 +162,8 @@ Options.Triggers.push({
       // the boss has jumped all the way to an edge and the players are (probably) facing it and so
       // reverse the calls here.
       netRegex: { id: '6557', source: 'Ra-la', capture: false },
-      alertText: (data, _matches, output) => data.seenLovingEmbrace ? output.right() : output.left(),
+      alertText: (data, _matches, output) =>
+        data.seenLovingEmbrace ? output.right() : output.left(),
       run: (data) => data.seenLovingEmbrace = true,
       outputStrings: {
         left: Outputs.left,
@@ -171,7 +174,8 @@ Options.Triggers.push({
       id: 'DeadEnds Ra-la Loving Embrace Left',
       type: 'StartsUsing',
       netRegex: { id: '6558', source: 'Ra-la', capture: false },
-      alertText: (data, _matches, output) => data.seenLovingEmbrace ? output.left() : output.right(),
+      alertText: (data, _matches, output) =>
+        data.seenLovingEmbrace ? output.left() : output.right(),
       run: (data) => data.seenLovingEmbrace = true,
       outputStrings: {
         left: Outputs.left,
@@ -190,7 +194,8 @@ Options.Triggers.push({
       type: 'GainsEffect',
       netRegex: { effectId: '6E9' },
       condition: (data) => data.CanCleanse(),
-      alertText: (data, matches, output) => output.cleanse({ player: data.ShortName(matches.target) }),
+      alertText: (data, matches, output) =>
+        output.cleanse({ player: data.ShortName(matches.target) }),
       outputStrings: {
         cleanse: {
           en: 'Heal ${player} to Full',

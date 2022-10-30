@@ -170,7 +170,7 @@ Options.Triggers.push({
       type: 'HeadMarker',
       netRegex: { id: ['004D', '004E'] },
       run: (data, matches) => {
-        data.dischord ?? (data.dischord = {});
+        data.dischord ??= {};
         data.dischord[matches.id] = matches.target;
       },
     },
@@ -293,7 +293,8 @@ Options.Triggers.push({
         'The Ultima Beast': 'ultimativ(?:e|er|es|en) Bestie',
         'The Ultima Warrior': 'ultimativ(?:e|er|es|en) Krieger',
         'The reality augmentation bay': 'Dilatationskammer',
-        'This humanoid prototype can perfectly replicate': 'Als Referenz wurde die Kraft der Ikonen herangezogen',
+        'This humanoid prototype can perfectly replicate':
+          'Als Referenz wurde die Kraft der Ikonen herangezogen',
         'Utilizing our data on Sophia': 'Nun folgt die Emulierung von Sophia',
         'Vocal Guidance System': 'Stimmleitsystem',
         'Servomechanical Minotaur': 'servomechanisch(?:e|er|es|en) Minotaurus',
@@ -337,8 +338,10 @@ Options.Triggers.push({
         'The Ultima Beast': 'Ultima-monstre',
         'The Ultima Warrior': 'Ultima-guerrier',
         'The reality augmentation bay': 'Salle de distorsion de la réalité',
-        'This humanoid prototype can perfectly replicate': 'Ce modèle exceptionnel est basé sur les non moins exceptionnelles divinités guerrières',
-        'Utilizing our data on Sophia': 'Quoi de mieux pour dominer les divinités guerrières que de retourner leur puissance contre elles?♪',
+        'This humanoid prototype can perfectly replicate':
+          'Ce modèle exceptionnel est basé sur les non moins exceptionnelles divinités guerrières',
+        'Utilizing our data on Sophia':
+          'Quoi de mieux pour dominer les divinités guerrières que de retourner leur puissance contre elles?♪',
         'Vocal Guidance System': 'système de guidage vocal',
         'Servomechanical Minotaur': 'minotaure servomécanique',
         'Servomechanical Chimera': 'chimère servomécanique',

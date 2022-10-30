@@ -801,14 +801,12 @@ Options.Triggers.push({
       netRegex: { effectId: ['D1[78]', 'CFF'] },
       condition: (data) => data.firstSnakeCalled,
       run: (data, matches) => {
-        let _a;
-        let _b;
         const id = matches.effectId;
         if (id === 'D17') {
           // 23s short, 29s long
           const duration = parseFloat(matches.duration);
           data.secondSnakeGazeFirst[matches.target] = duration < 24;
-          (_a = data.secondSnakeDebuff)[_b = matches.target] ?? (_a[_b] = 'nothing');
+          data.secondSnakeDebuff[matches.target] ??= 'nothing';
         } else if (id === 'D18') {
           data.secondSnakeDebuff[matches.target] = 'shriek';
         } else if (id === 'CFF') {
@@ -880,7 +878,11 @@ Options.Triggers.push({
         if (myDebuff === 'nothing') {
           return {
             alertText: gazeAlert,
-            infoText: output.noDebuff({ player1: friends[0], player2: friends[1], player3: friends[2] }),
+            infoText: output.noDebuff({
+              player1: friends[0],
+              player2: friends[1],
+              player3: friends[2],
+            }),
           };
         }
         if (myDebuff === 'shriek') {
@@ -1095,7 +1097,9 @@ Options.Triggers.push({
           // Check if have valid dirs
           const validDirs = [0, 1, 2, 3];
           if (!validDirs.includes(data.footfallsDirs[1])) {
-            console.error(`Blazing Footfalls Reminder: Unexpected dirs, got ${data.footfallsDirs[1]}`);
+            console.error(
+              `Blazing Footfalls Reminder: Unexpected dirs, got ${data.footfallsDirs[1]}`,
+            );
             return;
           }
           const dirToCard = {
@@ -1190,8 +1194,16 @@ Options.Triggers.push({
           }
           if (!validDirs.includes(dir)) {
             if (data.trailblazeCount === 0)
-              console.error(`Blazing Footfalls Crush/Impact Reminder: Unexpected dirs, got ${data.footfallsDirs[0]}`);
-            console.error(`Blazing Footfalls Crush/Impact Reminder: Unexpected dirs, got ${data.footfallsDirs[1]}`);
+              console.error(
+                `Blazing Footfalls Crush/Impact Reminder: Unexpected dirs, got ${
+                  data.footfallsDirs[0]
+                }`,
+              );
+            console.error(
+              `Blazing Footfalls Crush/Impact Reminder: Unexpected dirs, got ${
+                data.footfallsDirs[1]
+              }`,
+            );
             return;
           }
           const dirToCard = {
@@ -1208,7 +1220,12 @@ Options.Triggers.push({
               return { infoText: output.trailblaze({ dir: dirToCard[data.footfallsDirs[1]] }) };
             // Call future push location if knockback
             if (data.footfallsOrder[data.trailblazeCount] === 'impact')
-              return { infoText: output.trailblazeKnockbackToDir({ dir1: dirToCard[dir], dir2: dirToCard[data.footfallsDirs[1]] }) };
+              return {
+                infoText: output.trailblazeKnockbackToDir({
+                  dir1: dirToCard[dir],
+                  dir2: dirToCard[data.footfallsDirs[1]],
+                }),
+              };
           }
           // Second trailblaze should call torch location
           // Dir is flipped for crush, thus matching knockback direction
@@ -1401,16 +1418,28 @@ Options.Triggers.push({
           const heading = headingTo8Dir(c.Heading);
           // There's maybe some way to do this more generally, but I don't see it.
           // Also, if this fails for some reason, it will just not call anything below.
-          if (originalPos === 7 && heading === 2 || originalPos === 3 && heading === 0 || originalPos === 5 && heading === 1) {
+          if (
+            originalPos === 7 && heading === 2 || originalPos === 3 && heading === 0 ||
+            originalPos === 5 && heading === 1
+          ) {
             // Going towards NE
             unsafeSpots.push(1);
-          } else if (originalPos === 1 && heading === 4 || originalPos === 5 && heading === 2 || originalPos === 7 && heading === 3) {
+          } else if (
+            originalPos === 1 && heading === 4 || originalPos === 5 && heading === 2 ||
+            originalPos === 7 && heading === 3
+          ) {
             // Going towards SE
             unsafeSpots.push(3);
-          } else if (originalPos === 3 && heading === 6 || originalPos === 1 && heading === 5 || originalPos === 7 && heading === 4) {
+          } else if (
+            originalPos === 3 && heading === 6 || originalPos === 1 && heading === 5 ||
+            originalPos === 7 && heading === 4
+          ) {
             // Going towards SW
             unsafeSpots.push(5);
-          } else if (originalPos === 5 && heading === 0 || originalPos === 1 && heading === 6 || originalPos === 3 && heading === 7) {
+          } else if (
+            originalPos === 5 && heading === 0 || originalPos === 1 && heading === 6 ||
+            originalPos === 3 && heading === 7
+          ) {
             // Going towards NW
             unsafeSpots.push(7);
           }
@@ -1985,7 +2014,8 @@ Options.Triggers.push({
         if (splicer === undefined) {
           if (concept === undefined)
             return { alarmText: output.noDebuff() };
-          const isShort = concept === 'shortalpha' || concept === 'shortbeta' || concept === 'shortgamma';
+          const isShort = concept === 'shortalpha' || concept === 'shortbeta' ||
+            concept === 'shortgamma';
           const conceptStr = singleConceptMap[concept];
           if (isShort)
             return { alarmText: conceptStr };
@@ -2143,10 +2173,21 @@ Options.Triggers.push({
             throw new UnreachableCode();
           const [name1, name2] = conceptToPlayers[otherConcept].map((x) => data.ShortName(x));
           if (name1 === undefined)
-            return { alertText: output.colorTowerMergeLetter({ color: color, letter: output[otherConcept]() }) };
+            return {
+              alertText: output.colorTowerMergeLetter({
+                color: color,
+                letter: output[otherConcept](),
+              }),
+            };
           if (name2 === undefined)
             return { alertText: output.colorTowerMergePlayer({ color: color, player: name1 }) };
-          return { alertText: output.colorTowerMergePlayers({ color: color, player1: name1, player2: name2 }) };
+          return {
+            alertText: output.colorTowerMergePlayers({
+              color: color,
+              player1: name1,
+              player2: name2,
+            }),
+          };
         }
         // HC2 (final towers), in order to solve this, you need a 2nd beta or gamma
         const [doubled, doub2] = perfectedConcepts.filter((x) => conceptToPlayers[x].length === 2);
@@ -2157,9 +2198,16 @@ Options.Triggers.push({
           const [concept1, concept2] = [...perfectedConcepts].filter((x) => x !== myConcept);
           if (concept1 === undefined || concept2 === undefined)
             throw new UnreachableCode();
-          const [name1, name2] = [...conceptToPlayers[concept1], ...conceptToPlayers[concept2]].map((x) => data.ShortName(x));
+          const [name1, name2] = [...conceptToPlayers[concept1], ...conceptToPlayers[concept2]].map(
+            (x) => data.ShortName(x),
+          );
           if (name1 === undefined || name2 === undefined)
-            return { alertText: output.towerMergeLetters({ letter1: output[concept1](), letter2: output[concept2]() }) };
+            return {
+              alertText: output.towerMergeLetters({
+                letter1: output[concept1](),
+                letter2: output[concept2](),
+              }),
+            };
           return { alertText: output.towerMergePlayers({ player1: name1, player2: name2 }) };
         }
         // If not doubled, merge with one of the doubled folks (because they can't merge together).
@@ -2169,8 +2217,16 @@ Options.Triggers.push({
           throw new UnreachableCode();
         const color = output[tower]();
         if (name1 === undefined || name2 === undefined)
-          return { alertText: output.colorTowerMergeLetter({ color: color, letter: output[doubled]() }) };
-        return { alertText: output.colorTowerMergePlayers({ color: color, player1: name1, player2: name2 }) };
+          return {
+            alertText: output.colorTowerMergeLetter({ color: color, letter: output[doubled]() }),
+          };
+        return {
+          alertText: output.colorTowerMergePlayers({
+            color: color,
+            player1: name1,
+            player2: name2,
+          }),
+        };
       },
       run: (data) => {
         data.arcaneChannelColor.clear();

@@ -247,7 +247,9 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: '62DA', source: 'Ser Grinnaux', capture: false },
       alertText: (data, _matches, output) => {
-        return data.phase !== 'doorboss' || data.seenEmptyDimension ? output.in() : output.inAndTether();
+        return data.phase !== 'doorboss' || data.seenEmptyDimension
+          ? output.in()
+          : output.inAndTether();
       },
       run: (data) => data.seenEmptyDimension = true,
       outputStrings: {
@@ -312,7 +314,8 @@ Options.Triggers.push({
       id: 'DSR Adelphel KB Direction',
       type: 'NameToggle',
       netRegex: { toggle: '01' },
-      condition: (data, matches) => data.phase === 'doorboss' && matches.id === data.adelphelId && data.firstAdelphelJump,
+      condition: (data, matches) =>
+        data.phase === 'doorboss' && matches.id === data.adelphelId && data.firstAdelphelJump,
       // Delay 0.1s here to prevent any race condition issues with getCombatants
       delaySeconds: 0.1,
       promise: async (data, matches) => {
@@ -500,8 +503,12 @@ Options.Triggers.push({
         };
         // Select the knights
         const combatantNameKnights = [];
-        combatantNameKnights.push(vellguineLocaleNames[data.parserLang] ?? vellguineLocaleNames['en']);
-        combatantNameKnights.push(paulecrainLocaleNames[data.parserLang] ?? paulecrainLocaleNames['en']);
+        combatantNameKnights.push(
+          vellguineLocaleNames[data.parserLang] ?? vellguineLocaleNames['en'],
+        );
+        combatantNameKnights.push(
+          paulecrainLocaleNames[data.parserLang] ?? paulecrainLocaleNames['en'],
+        );
         combatantNameKnights.push(ignasseLocaleNames[data.parserLang] ?? ignasseLocaleNames['en']);
         const spiralThrusts = [];
         const knightCombatantData = await callOverlayHandler({
@@ -536,13 +543,15 @@ Options.Triggers.push({
         // Remove null elements from the array to get remaining two dirNums
         dirNums.forEach((dirNum) => {
           if (dirNum !== null)
-            (data.spiralThrustSafeZones ?? (data.spiralThrustSafeZones = [])).push(dirNum);
+            (data.spiralThrustSafeZones ??= []).push(dirNum);
         });
       },
       infoText: (data, _matches, output) => {
-        data.spiralThrustSafeZones ?? (data.spiralThrustSafeZones = []);
+        data.spiralThrustSafeZones ??= [];
         if (data.spiralThrustSafeZones.length !== 2) {
-          console.error(`Spiral Thrusts: expected 2 safe zones got ${data.spiralThrustSafeZones.length}`);
+          console.error(
+            `Spiral Thrusts: expected 2 safe zones got ${data.spiralThrustSafeZones.length}`,
+          );
           return;
         }
         // Map of directions
@@ -629,7 +638,9 @@ Options.Triggers.push({
         // After the above adjustment to handle modular math wrapping,
         // d1 and d2 should be exactly two spaces apart.
         if (d2 - d1 !== 2 && d1 - d2 !== 2) {
-          console.error(`DragonsRage: bad dirs: ${d1}, ${d2}, ${JSON.stringify(data.combatantData)}`);
+          console.error(
+            `DragonsRage: bad dirs: ${d1}, ${d2}, ${JSON.stringify(data.combatantData)}`,
+          );
           return;
         }
         // Average to find the point between d1 and d2, then add 4 to find its opposite.
@@ -743,7 +754,9 @@ Options.Triggers.push({
         }
         const combatantDataJanlenouxLength = combatantDataJanlenoux.combatants.length;
         if (combatantDataJanlenouxLength < 1) {
-          console.error(`Ser Janlenoux: expected at least 1 combatants got ${combatantDataJanlenouxLength}`);
+          console.error(
+            `Ser Janlenoux: expected at least 1 combatants got ${combatantDataJanlenouxLength}`,
+          );
           return;
         }
         // Sort to retreive last combatant in list
@@ -867,7 +880,10 @@ Options.Triggers.push({
         if (p1dps && p2dps)
           return output.dpsMeteors({ player1: data.ShortName(p1), player2: data.ShortName(p2) });
         if (!p1dps && !p2dps)
-          return output.tankHealerMeteors({ player1: data.ShortName(p1), player2: data.ShortName(p2) });
+          return output.tankHealerMeteors({
+            player1: data.ShortName(p1),
+            player2: data.ShortName(p2),
+          });
         return output.unknownMeteors({ player1: data.ShortName(p1), player2: data.ShortName(p2) });
       },
       outputStrings: {
@@ -1074,11 +1090,16 @@ Options.Triggers.push({
         data.diveFromGraceLashGnashKey = key;
         const num = data.diveFromGraceNum[data.me];
         if (num !== 1 && num !== 2 && num !== 3) {
-          console.error(`DSR Gnash and Lash: missing number: ${JSON.stringify(data.diveFromGraceNum)}`);
+          console.error(
+            `DSR Gnash and Lash: missing number: ${JSON.stringify(data.diveFromGraceNum)}`,
+          );
           return inout;
         }
         // Special case for side ones baiting the two towers.
-        if (data.eyeOfTheTyrantCounter === 1 && num === 1 && data.diveFromGracePreviousPosition[data.me] !== 'middle')
+        if (
+          data.eyeOfTheTyrantCounter === 1 && num === 1 &&
+          data.diveFromGracePreviousPosition[data.me] !== 'middle'
+        )
           return output.baitStackInOut({ inout: inout });
         // Filter out anybody who needs to be stacking.
         const firstStack = data.eyeOfTheTyrantCounter === 0 && num !== 1;
@@ -1287,7 +1308,9 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const num = data.diveFromGraceNum[data.me];
         if (!num) {
-          console.error(`DFG Tower 1 Reminder: missing number: ${JSON.stringify(data.diveFromGraceNum)}`);
+          console.error(
+            `DFG Tower 1 Reminder: missing number: ${JSON.stringify(data.diveFromGraceNum)}`,
+          );
           return;
         }
         const inout = output[data.diveFromGraceLashGnashKey]();
@@ -1429,7 +1452,9 @@ Options.Triggers.push({
       alertText: (data, _matches, output) => {
         const num = data.diveFromGraceNum[data.me];
         if (!num) {
-          console.error(`DFG Tower 1 and 2: missing number: ${JSON.stringify(data.diveFromGraceNum)}`);
+          console.error(
+            `DFG Tower 1 and 2: missing number: ${JSON.stringify(data.diveFromGraceNum)}`,
+          );
           return;
         }
         // Sorted from west to east, and filled in with unknown if missing.
@@ -1499,7 +1524,9 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const num = data.diveFromGraceNum[data.me];
         if (!num) {
-          console.error(`DFG Dive Single Tower: missing number: ${JSON.stringify(data.diveFromGraceNum)}`);
+          console.error(
+            `DFG Dive Single Tower: missing number: ${JSON.stringify(data.diveFromGraceNum)}`,
+          );
           return output.text();
         }
         // To condense messages, two tower baiters get this call during the gnash and lash.
@@ -1949,7 +1976,9 @@ Options.Triggers.push({
       id: 'DSR Playstation2 Fire Chains No Marker',
       type: 'HeadMarker',
       netRegex: {},
-      condition: (data, matches) => data.phase === 'thordan2' && playstationHeadmarkerIds.includes(getHeadmarkerId(data, matches)),
+      condition: (data, matches) =>
+        data.phase === 'thordan2' &&
+        playstationHeadmarkerIds.includes(getHeadmarkerId(data, matches)),
       delaySeconds: 0.5,
       suppressSeconds: 5,
       alarmText: (data, _matches, output) => {
@@ -2268,10 +2297,14 @@ Options.Triggers.push({
         if (data.combatantData.length === 0)
           console.error(`Hallowed: no Nidhoggs found`);
         else if (data.combatantData.length > 1)
-          console.error(`Hallowed: unexpected number of Nidhoggs: ${JSON.stringify(data.combatantData)}`);
+          console.error(
+            `Hallowed: unexpected number of Nidhoggs: ${JSON.stringify(data.combatantData)}`,
+          );
       },
       alertText: (data, matches, output) => {
-        const wings = matches.id === '6D23' || matches.id === '6D24' ? output.left() : output.right();
+        const wings = matches.id === '6D23' || matches.id === '6D24'
+          ? output.left()
+          : output.right();
         let head;
         const isHeadDown = matches.id === '6D23' || matches.id === '6D26';
         if (isHeadDown)

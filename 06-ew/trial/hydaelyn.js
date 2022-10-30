@@ -82,7 +82,10 @@ Options.Triggers.push({
         if (!data.isEquinox)
           return;
         if (data.crystallize)
-          return output.combo({ first: output.intercards(), second: output[data.crystallize]() });
+          return output.combo({
+            first: output.intercards(),
+            second: output[data.crystallize](),
+          });
         return output.intercards();
       },
       run: (data) => {

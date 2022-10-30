@@ -169,7 +169,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Warrior Of Light', id: '4EF3', capture: false },
       run: (data) => {
-        data.imbued ?? (data.imbued = []);
+        data.imbued ??= [];
         data.imbued.push('fire');
       },
     },
@@ -178,7 +178,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Warrior Of Light', id: '4EF4', capture: false },
       run: (data) => {
-        data.imbued ?? (data.imbued = []);
+        data.imbued ??= [];
         data.imbued.push('blizzard');
       },
     },
@@ -187,7 +187,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Warrior Of Light', id: '4EF5', capture: false },
       run: (data) => {
-        data.imbued ?? (data.imbued = []);
+        data.imbued ??= [];
         data.imbued.push('holy');
       },
     },
@@ -196,7 +196,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Warrior Of Light', id: '4EF6', capture: false },
       run: (data) => {
-        data.imbued ?? (data.imbued = []);
+        data.imbued ??= [];
         data.imbued.push('stone');
       },
     },
@@ -205,7 +205,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Warrior Of Light', id: '4F4A', capture: false },
       preRun: (data) => {
-        data.imbued ?? (data.imbued = []);
+        data.imbued ??= [];
         data.imbued.push('swordIn');
       },
       alertText: (data, _matches, output) => {
@@ -221,7 +221,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Warrior Of Light', id: '4F49', capture: false },
       preRun: (data) => {
-        data.imbued ?? (data.imbued = []);
+        data.imbued ??= [];
         data.imbued.push('swordOut');
       },
       alertText: (data, _matches, output) => {
@@ -278,7 +278,11 @@ Options.Triggers.push({
       id: 'WOLEx Fatal Cleave / Blade Of Shadow',
       type: 'StartsUsing',
       // Either tank buster, but don't be too noisy
-      netRegex: { source: ['Spectral Warrior', 'Spectral Dark Knight'], id: '515[47]', capture: false },
+      netRegex: {
+        source: ['Spectral Warrior', 'Spectral Dark Knight'],
+        id: '515[47]',
+        capture: false,
+      },
       suppressSeconds: 2,
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
@@ -288,7 +292,11 @@ Options.Triggers.push({
     {
       id: 'WOLEx Berserk / Deep Darkside',
       type: 'StartsUsing',
-      netRegex: { source: ['Spectral Warrior', 'Spectral Dark Knight'], id: '515[68]', capture: false },
+      netRegex: {
+        source: ['Spectral Warrior', 'Spectral Dark Knight'],
+        id: '515[68]',
+        capture: false,
+      },
       condition: (data) => data.CanSilence(),
       suppressSeconds: 2,
       alarmText: (_data, _matches, output) => output.text(),

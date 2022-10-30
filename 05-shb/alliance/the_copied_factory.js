@@ -110,7 +110,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Right Arm',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'The wall-mounted right arm begins to move.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'The wall-mounted right arm begins to move.*?',
+        capture: false,
+      }),
       infoText: (_data, _matches, output) => output.text(),
       run: (data) => data.alliance = data.alliance ?? 'A',
       outputStrings: {
@@ -127,7 +130,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Flamethrowers',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'The wall-mounted flamethrowers activate\..*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'The wall-mounted flamethrowers activate\..*?',
+        capture: false,
+      }),
       alertText: (_data, _matches, output) => output.text(),
       run: (data) => data.alliance = data.alliance || 'B',
       outputStrings: {
@@ -144,7 +150,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Left Arm 1',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'The wall-mounted left arm begins to move.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'The wall-mounted left arm begins to move.*?',
+        capture: false,
+      }),
       durationSeconds: 6,
       response: Responses.getOut('info'),
       run: (data) => data.alliance = data.alliance || 'C',
@@ -152,7 +161,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Left Arm 2',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'The wall-mounted left arm begins to move.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'The wall-mounted left arm begins to move.*?',
+        capture: false,
+      }),
       delaySeconds: 8,
       alertText: (_data, _matches, output) => output.text(),
       outputStrings: {
@@ -169,7 +181,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Left Arm 3',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'The wall-mounted left arm begins to move.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'The wall-mounted left arm begins to move.*?',
+        capture: false,
+      }),
       delaySeconds: 10,
       alertText: (_data, _matches, output) => output.text(),
       outputStrings: {
@@ -199,7 +214,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Electric Floor',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'You hear frenzied movement from machines beneath.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'You hear frenzied movement from machines beneath.*?',
+        capture: false,
+      }),
       durationSeconds: 10,
       suppressSeconds: 15,
       infoText: (_data, _matches, output) => output.text(),
@@ -217,7 +235,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Conveyer Belts',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'The conveyer belts whirr to life!.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'The conveyer belts whirr to life!.*?',
+        capture: false,
+      }),
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
@@ -233,7 +254,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Oil 1',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'Flammable oil is leaking from the floor.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'Flammable oil is leaking from the floor.*?',
+        capture: false,
+      }),
       durationSeconds: 3,
       suppressSeconds: 15,
       alertText: (_data, _matches, output) => output.text(),
@@ -251,7 +275,10 @@ Options.Triggers.push({
     {
       id: 'Copied Hobbes Oil 2',
       type: 'GameLog',
-      netRegex: NetRegexes.message({ line: 'Flammable oil is leaking from the floor.*?', capture: false }),
+      netRegex: NetRegexes.message({
+        line: 'Flammable oil is leaking from the floor.*?',
+        capture: false,
+      }),
       delaySeconds: 6,
       durationSeconds: 3,
       suppressSeconds: 15,
@@ -643,9 +670,11 @@ Options.Triggers.push({
         'The wall-mounted right arm begins to move': 'Der wandmontierte rechte Arm ist aktiv!',
         'The wall-mounted flamethrowers activate\.': 'Die wandmontierten Flammenwerfer sind aktiv!',
         'The wall-mounted left arm begins to move': 'Der wandmontierte linke Arm ist aktiv!',
-        'You hear frenzied movement from machines beneath': 'Die Maschinenwesen zu deinen Füßen bewegen sich!',
+        'You hear frenzied movement from machines beneath':
+          'Die Maschinenwesen zu deinen Füßen bewegen sich!',
         'The conveyer belts whirr to life!': 'Die Fließbänder sind aktiv!',
-        'Flammable oil is leaking from the floor': 'Zu deinen Füßen wird brennbare Flüssigkeit eingelassen!',
+        'Flammable oil is leaking from the floor':
+          'Zu deinen Füßen wird brennbare Flüssigkeit eingelassen!',
       },
       'replaceText': {
         '360-Degree Bombing Maneuver': 'Offensive: Raketenring',
@@ -738,7 +767,8 @@ Options.Triggers.push({
         'Warehouse A': 'l\'entrepôt A',
         'Warehouse B': 'l\'entrepôt B',
         'Warehouse C': 'l\'entrepôt C',
-        'You hear frenzied movement from machines beneath': 'Les formes de vie mécaniques sous vos pieds s\'activent!',
+        'You hear frenzied movement from machines beneath':
+          'Les formes de vie mécaniques sous vos pieds s\'activent!',
       },
       'replaceText': {
         '\\?': ' ?',

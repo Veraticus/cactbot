@@ -102,7 +102,12 @@ Options.Triggers.push({
     {
       id: 'BA East Side',
       type: 'Ability',
-      netRegex: NetRegexes.ability({ id: '3957', source: 'Owain', target: '[^:]+', capture: false }),
+      netRegex: NetRegexes.ability({
+        id: '3957',
+        source: 'Owain',
+        target: '[^:]+',
+        capture: false,
+      }),
       suppressSeconds: 1000,
       run: (data) => data.side = 'east',
     },
@@ -482,7 +487,7 @@ Options.Triggers.push({
       condition: (data) => data.sealed,
       run: (data) => {
         // RV clones get buffs in the reverse order that they do their attacks in.
-        data.clones ?? (data.clones = []);
+        data.clones ??= [];
         data.clones.push('astral');
       },
     },
@@ -494,7 +499,7 @@ Options.Triggers.push({
       condition: (data) => data.sealed,
       run: (data) => {
         // RV clones get buffs in the reverse order that they do their attacks in.
-        data.clones ?? (data.clones = []);
+        data.clones ??= [];
         data.clones.push('umbral');
       },
     },
@@ -807,7 +812,8 @@ Options.Triggers.push({
     {
       'locale': 'de',
       'replaceSync': {
-        '7 minutes have elapsed since your last activity..*?': 'Seit deiner letzten Aktivität sind 7 Minuten vergangen.',
+        '7 minutes have elapsed since your last activity..*?':
+          'Seit deiner letzten Aktivität sind 7 Minuten vergangen.',
         'Absolute Virtue': 'Absolut(?:e|er|es|en) Tugend',
         'Arsenal Centaur': 'Arsenal-Zentaur',
         'Art': 'Art',
@@ -823,15 +829,19 @@ Options.Triggers.push({
         'Relative Virtue(?! gains)': 'Relative Tugend',
         'Shadow': 'Proto-Yadis-Schatten',
         'Streak Lightning': 'Blitzladung',
-        '5 minutes have elapsed since your last activity': 'Seit deiner letzten Aktivität sind 5 Minuten vergangen',
-        'The memories of heroes past live on again': 'Das Vermächtnis vergangener Helden lebt von Neuem auf',
+        '5 minutes have elapsed since your last activity':
+          'Seit deiner letzten Aktivität sind 5 Minuten vergangen',
+        'The memories of heroes past live on again':
+          'Das Vermächtnis vergangener Helden lebt von Neuem auf',
         'Munderg, turn flesh to ash': 'Munderg, entfessele den Flammeneid',
         'Munderg, turn blood to ice': 'Munderg, das Eis der Ewigkeit soll sie für Äonen bannen',
         'The Shin-Zantetsuken Containment Unit': 'Shin-Zantetsuken-Quarantäneblock',
         'The Lance of Virtue Containment Unit': 'Lanze der Tugend-Quarantäneblock',
         'The Proto Ozma Containment Unit': 'Proto-Yadis-Quarantäneblock',
-        'Relative Virtue gains the effect of Astral Essence': 'Die Relative Tugend erhält den Effekt von.*?Arm der Lichts',
-        'Relative Virtue gains the effect of Umbral Essence': 'Die Relative Tugend erhält den Effekt von.*?Arm der Dunkelheit',
+        'Relative Virtue gains the effect of Astral Essence':
+          'Die Relative Tugend erhält den Effekt von.*?Arm der Lichts',
+        'Relative Virtue gains the effect of Umbral Essence':
+          'Die Relative Tugend erhält den Effekt von.*?Arm der Dunkelheit',
       },
       'replaceText': {
         '\\(Stack\\)': '(Sammeln)',
@@ -900,7 +910,8 @@ Options.Triggers.push({
     {
       'locale': 'fr',
       'replaceSync': {
-        '7 minutes have elapsed since your last activity.': 'Votre personnage est inactif depuis 7 minutes',
+        '7 minutes have elapsed since your last activity.':
+          'Votre personnage est inactif depuis 7 minutes',
         'Absolute Virtue': 'Vertu absolue',
         'Arsenal Centaur': 'Centaure de l\'Arsenal',
         'Art': 'Art',
@@ -916,12 +927,16 @@ Options.Triggers.push({
         'Proto Ozma(?! containment)': 'Proto-Ozma',
         'Raiden': 'Raiden',
         'Relative Virtue(?! gains)': 'Vertu relative',
-        'Relative Virtue gains the effect of Astral Essence': 'Vertu relative bénéficie de l\'effet.*?Bras de Lumière',
-        'Relative Virtue gains the effect of Umbral Essence': 'Vertu relative bénéficie de l\'effet.*?Bras de Ténèbres',
+        'Relative Virtue gains the effect of Astral Essence':
+          'Vertu relative bénéficie de l\'effet.*?Bras de Lumière',
+        'Relative Virtue gains the effect of Umbral Essence':
+          'Vertu relative bénéficie de l\'effet.*?Bras de Ténèbres',
         'Shadow': 'Ombre de Proto-Ozma',
         'Streak Lightning': 'Éclair chargeant',
-        'The Lance of Virtue Containment Unit': 'l\'enceinte de confinement de la lance de la vertu',
-        'The memories of heroes past live on again': 'L\'égide des héros vaillants vous a ressuscité',
+        'The Lance of Virtue Containment Unit':
+          'l\'enceinte de confinement de la lance de la vertu',
+        'The memories of heroes past live on again':
+          'L\'égide des héros vaillants vous a ressuscité',
         'The Proto Ozma Containment Unit': 'l\'enceinte de confinement de Proto-Ozma',
         'The Shin-Zantetsuken Containment Unit': 'l\'enceinte de confinement de Shin-Zantetsuken',
       },

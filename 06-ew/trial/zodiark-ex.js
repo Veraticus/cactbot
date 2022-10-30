@@ -91,7 +91,12 @@ Options.Triggers.push({
         const portalActors = await fetchCombatantsById([matches.targetId]);
         for (const actor of portalActors) {
           if (actor.ID)
-            data.activeSigils.push({ x: actor.PosX, y: actor.PosY, typeId: sigil.blueCone, npcId: actor.ID.toString(16).toUpperCase() });
+            data.activeSigils.push({
+              x: actor.PosX,
+              y: actor.PosY,
+              typeId: sigil.blueCone,
+              npcId: actor.ID.toString(16).toUpperCase(),
+            });
         }
       },
       alertText: (data, matches, output) => {
@@ -147,7 +152,12 @@ Options.Triggers.push({
         const portalActors = await fetchCombatantsById([matches.targetId]);
         for (const actor of portalActors) {
           if (actor.ID)
-            data.activeSigils.push({ x: actor.PosX, y: actor.PosY, typeId: sigil.redBox, npcId: actor.ID.toString(16).toUpperCase() });
+            data.activeSigils.push({
+              x: actor.PosX,
+              y: actor.PosY,
+              typeId: sigil.redBox,
+              npcId: actor.ID.toString(16).toUpperCase(),
+            });
         }
       },
       alertText: (data, matches, output) => {
@@ -193,13 +203,22 @@ Options.Triggers.push({
       netRegex: { id: [sigil.greenBeam, sigil.redBox, sigil.blueCone], source: 'Arcane Sigil' },
       run: (data, matches, _output) => {
         if (parseFloat(matches.y) < 100)
-          data.activeFrontSigils.push({ x: parseFloat(matches.x), y: parseFloat(matches.y), typeId: matches.id, npcId: matches.sourceId });
+          data.activeFrontSigils.push({
+            x: parseFloat(matches.x),
+            y: parseFloat(matches.y),
+            typeId: matches.id,
+            npcId: matches.sourceId,
+          });
       },
     },
     {
       id: 'ZodiarkEx Arcane Sigil',
       type: 'StartsUsing',
-      netRegex: { id: [sigil.greenBeam, sigil.redBox, sigil.blueCone], source: 'Arcane Sigil', capture: false },
+      netRegex: {
+        id: [sigil.greenBeam, sigil.redBox, sigil.blueCone],
+        source: 'Arcane Sigil',
+        capture: false,
+      },
       delaySeconds: 0.2,
       suppressSeconds: 0.5,
       alertText: (data, _matches, output) => {
@@ -211,7 +230,10 @@ Options.Triggers.push({
           return output.south();
         if (activeFrontSigils.length === 1 && activeFrontSigils[0]?.typeId === sigil.blueCone)
           return output.north();
-        if (activeFrontSigils.length === 2 && activeFrontSigils[0]?.typeId === sigil.greenBeam && activeFrontSigils[1]?.typeId === sigil.greenBeam)
+        if (
+          activeFrontSigils.length === 2 && activeFrontSigils[0]?.typeId === sigil.greenBeam &&
+          activeFrontSigils[1]?.typeId === sigil.greenBeam
+        )
           return output.middle();
         if (activeFrontSigils.length === 3) {
           for (const sig of activeFrontSigils) {

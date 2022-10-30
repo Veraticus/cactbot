@@ -171,12 +171,14 @@ Options.Triggers.push({
     {
       'locale': 'de',
       'replaceSync': {
-        'Calculations indicate increased probability of defeat': 'Warnung. Erhöhte Wahrscheinlichkeit einer Niederlage',
+        'Calculations indicate increased probability of defeat':
+          'Warnung. Erhöhte Wahrscheinlichkeit einer Niederlage',
         'Omega(?!-)': 'Omega',
         'Omega-M': 'Omega-M',
         'Optical Unit': 'Optikmodul',
         'Progress to party combat': 'Initiiere Gruppenkampf',
-        '\\\\<blip\\\\> Warning\\\\\. Calculations indicate': '<biep> Warnung. Erhöhte Wahrscheinlichkeit',
+        '\\\\<blip\\\\> Warning\\\\\. Calculations indicate':
+          '<biep> Warnung. Erhöhte Wahrscheinlichkeit',
       },
       'replaceText': {
         'Beyond Strength': 'Schildkombo G',
@@ -210,8 +212,10 @@ Options.Triggers.push({
     {
       'locale': 'fr',
       'replaceSync': {
-        '\\\\<blip\\\\> Warning\\\\\. Calculations indicate': 'Alerte... Alerte... Forte augmentation',
-        'Calculations indicate increased probability of defeat': 'Forte augmentation des probabilités de défaite',
+        '\\\\<blip\\\\> Warning\\\\\. Calculations indicate':
+          'Alerte... Alerte... Forte augmentation',
+        'Calculations indicate increased probability of defeat':
+          'Forte augmentation des probabilités de défaite',
         'Omega(?!-)': 'Oméga',
         'Omega-M': 'Oméga-M',
         'Optical Unit': 'unité optique',

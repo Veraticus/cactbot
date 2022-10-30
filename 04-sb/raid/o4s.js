@@ -153,7 +153,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: '2401', source: 'Exdeath' },
       condition: (data, matches) => {
-        data.flareTargets ?? (data.flareTargets = []);
+        data.flareTargets ??= [];
         data.flareTargets.push(matches.target);
         return data.flareTargets.length === 3;
       },
@@ -858,7 +858,8 @@ Options.Triggers.push({
       id: 'O4S Neo Beyond Death Delta Tank',
       type: 'GainsEffect',
       netRegex: { effectId: '566' },
-      condition: (data, matches) => data.phase === 'delta' && matches.target === data.me && data.role === 'tank',
+      condition: (data, matches) =>
+        data.phase === 'delta' && matches.target === data.me && data.role === 'tank',
       delaySeconds: 0.5,
       infoText: (data, _matches, output) => {
         // Something went awry, or maybe healers dead.  Just say stack on water anyway,
@@ -884,7 +885,8 @@ Options.Triggers.push({
       id: 'O4S Neo Beyond Death Delta Initial',
       type: 'GainsEffect',
       netRegex: { effectId: '566' },
-      condition: (data, matches) => data.phase === 'delta' && matches.target === data.me && data.role !== 'tank',
+      condition: (data, matches) =>
+        data.phase === 'delta' && matches.target === data.me && data.role !== 'tank',
       infoText: (_data, _matches, output) => output.beyondDeath(),
       outputStrings: {
         beyondDeath: {
@@ -973,7 +975,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: '2401', source: 'Neo Exdeath' },
       condition: (data, matches) => {
-        data.flareTargets ?? (data.flareTargets = []);
+        data.flareTargets ??= [];
         data.flareTargets.push(matches.target);
         return data.flareTargets.length === 3;
       },

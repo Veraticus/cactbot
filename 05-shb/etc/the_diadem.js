@@ -11,7 +11,11 @@ Options.Triggers.push({
     {
       id: 'Diadem Found Gather Point',
       type: 'GameLog',
-      netRegex: { line: 'You sense a grade .* clouded (?:mineral deposit|rocky outcrop|mature tree|lush vegetation patch).*?', capture: false },
+      netRegex: {
+        line:
+          'You sense a grade .* clouded (?:mineral deposit|rocky outcrop|mature tree|lush vegetation patch).*?',
+        capture: false,
+      },
       alertText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {

@@ -64,7 +64,9 @@ Options.Triggers.push({
       infoText: (data, _matches, output) => {
         const safeQuadrants = new Set(directions);
         for (const stone of data.ruby1TopazStones)
-          safeQuadrants.delete(convertCoordinatesToDirection(parseFloat(stone.targetX), parseFloat(stone.targetY)));
+          safeQuadrants.delete(
+            convertCoordinatesToDirection(parseFloat(stone.targetX), parseFloat(stone.targetY)),
+          );
         const safe = Array.from(safeQuadrants);
         const [safe0, safe1] = safe;
         data.isRuby1Done = true;
@@ -79,7 +81,9 @@ Options.Triggers.push({
           const stoneX = parseFloat(stone.targetX);
           const stoneY = parseFloat(stone.targetY);
           if (Math.abs(stoneX - 100) < 5 && Math.abs(stoneY - 100) < 5)
-            return output.safeCorner({ dir1: output[convertCoordinatesToDirection(stoneX, stoneY)]() });
+            return output.safeCorner({
+              dir1: output[convertCoordinatesToDirection(stoneX, stoneY)](),
+            });
         }
         return;
       },
@@ -145,7 +149,8 @@ Options.Triggers.push({
       type: 'StartsUsing',
       // 7703: 3.7s, 7704: 6.2s, 7705: 8.7s, 7706: 11.2s
       netRegex: { id: '770[3456]', source: 'Proto-Carbuncle' },
-      run: (data, matches) => data.topazClusterCombatantIdToAbilityId[parseInt(matches.sourceId, 16)] = matches.id,
+      run: (data, matches) =>
+        data.topazClusterCombatantIdToAbilityId[parseInt(matches.sourceId, 16)] = matches.id,
     },
     {
       id: 'P5S Ruby 3 Topaz Cluster',
@@ -153,7 +158,6 @@ Options.Triggers.push({
       netRegex: { id: '7702', source: 'Proto-Carbuncle', capture: false },
       durationSeconds: 12,
       promise: async (data) => {
-        let _a;
         // Log position data can be stale, call OverlayPlugin
         const result = await callOverlayHandler({
           call: 'getCombatants',
@@ -169,7 +173,7 @@ Options.Triggers.push({
           // Convert from ability id to [0-3] index
           // 7703 is the Topaz Ray cast with the lowest cast time
           const index = parseInt(abilityId, 16) - parseInt('7703', 16);
-          (_a = data.topazRays)[index] ?? (_a[index] = []);
+          data.topazRays[index] ??= [];
           // Map from coordinate position to intercardinal quadrant
           const direction = convertCoordinatesToDirection(combatant.PosX, combatant.PosY);
           data.topazRays[index]?.push(direction);
@@ -200,7 +204,12 @@ Options.Triggers.push({
         }
         if (safeDirs.length !== 4)
           return;
-        return output.text({ dir1: safeDirs[0], dir2: safeDirs[1], dir3: safeDirs[2], dir4: safeDirs[3] });
+        return output.text({
+          dir1: safeDirs[0],
+          dir2: safeDirs[1],
+          dir3: safeDirs[2],
+          dir4: safeDirs[3],
+        });
       },
       outputStrings: {
         NE: Outputs.dirNE,

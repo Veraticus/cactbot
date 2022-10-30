@@ -24,13 +24,9 @@ Options.Triggers.push({
       type: 'Tether',
       netRegex: { id: '0012' },
       run: (data, matches) => {
-        let _a;
-        let _b;
-        let _c;
-        let _d;
-        data.thornMap ?? (data.thornMap = {});
-        ((_a = data.thornMap)[_b = matches.source] ?? (_a[_b] = [])).push(matches.target);
-        ((_c = data.thornMap)[_d = matches.target] ?? (_c[_d] = [])).push(matches.source);
+        data.thornMap ??= {};
+        (data.thornMap[matches.source] ??= []).push(matches.target);
+        (data.thornMap[matches.target] ??= []).push(matches.source);
       },
     },
     {
@@ -175,7 +171,8 @@ Options.Triggers.push({
       id: 'T6 Swarm',
       type: 'Ability',
       netRegex: { id: '7A0', source: 'Rafflesia' },
-      condition: (data, matches) => data.me === matches.target || data.role === 'healer' || data.job === 'BLU',
+      condition: (data, matches) =>
+        data.me === matches.target || data.role === 'healer' || data.job === 'BLU',
       alertText: (data, matches, output) => {
         if (matches.target === data.me)
           return output.swarmOnYou();

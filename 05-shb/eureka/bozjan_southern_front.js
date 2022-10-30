@@ -106,16 +106,15 @@ const orbOutputStrings = {
   },
 };
 // TODO: promote something like this to Conditions?
-const tankBusterOnParty = (ceName) =>
-  (data, matches) => {
-    if (ceName && data.ce !== ceName)
-      return false;
-    if (matches.target === data.me)
-      return true;
-    if (data.role !== 'healer')
-      return false;
-    return data.party.inParty(matches.target);
-  };
+const tankBusterOnParty = (ceName) => (data, matches) => {
+  if (ceName && data.ce !== ceName)
+    return false;
+  if (matches.target === data.me)
+    return true;
+  if (data.role !== 'healer')
+    return false;
+  return data.party.inParty(matches.target);
+};
 Options.Triggers.push({
   zoneId: ZoneId.TheBozjanSouthernFront,
   timelineFile: 'bozjan_southern_front.txt',
@@ -385,7 +384,7 @@ Options.Triggers.push({
       type: 'AddedCombatant',
       netRegex: { npcNameId: '944[3-8]' },
       run: (data, matches) => {
-        data.orbs ?? (data.orbs = {});
+        data.orbs ??= {};
         data.orbs[matches.id.toUpperCase()] = matches.npcNameId;
       },
     },
@@ -451,7 +450,7 @@ Options.Triggers.push({
       delaySeconds: 7.2 - 5,
       durationSeconds: 4.5,
       alertText: (data, _matches, output) => {
-        data.orbOutput ?? (data.orbOutput = []);
+        data.orbOutput ??= [];
         const orb = data.orbOutput.shift();
         if (!orb)
           return;
@@ -466,7 +465,7 @@ Options.Triggers.push({
       // 2.5 seconds warning, as it's weird if this shows up way before the first orb.
       delaySeconds: 9 - 2.5,
       alertText: (data, _matches, output) => {
-        data.orbOutput ?? (data.orbOutput = []);
+        data.orbOutput ??= [];
         const orb = data.orbOutput.shift();
         if (!orb)
           return;
@@ -479,7 +478,7 @@ Options.Triggers.push({
       type: 'AddedCombatant',
       netRegex: { npcNameId: '9449' },
       run: (data, matches) => {
-        data.warped ?? (data.warped = {});
+        data.warped ??= {};
         data.warped[matches.id.toUpperCase()] = {
           x: parseFloat(matches.x),
           y: parseFloat(matches.y),
@@ -623,7 +622,10 @@ Options.Triggers.push({
     {
       id: 'Bozja South Castrum Lyon Passage',
       type: 'GameLog',
-      netRegex: { line: 'Lyon the Beast King would do battle at Majesty\'s Place.*?', capture: false },
+      netRegex: {
+        line: 'Lyon the Beast King would do battle at Majesty\'s Place.*?',
+        capture: false,
+      },
       alertText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {
@@ -660,12 +662,14 @@ Options.Triggers.push({
     {
       'locale': 'de',
       'replaceSync': {
-        'Lyon the Beast King would do battle at Majesty\'s Place': 'Der Bestienkönig will einen Kampf auf seinem Podest',
+        'Lyon the Beast King would do battle at Majesty\'s Place':
+          'Der Bestienkönig will einen Kampf auf seinem Podest',
         'Red Comet': 'Rot(?:e|er|es|en) Meteor',
         'Albeleo\'s Monstrosity': 'Albeleos Biest',
         'Albeleo\'s Hrodvitnir': 'Hrodvitnir',
         'Electric Charge': 'Blitz',
-        '7 minutes have elapsed since your last activity..*?': 'Seit deiner letzten Aktivität sind 7 Minuten vergangen.',
+        '7 minutes have elapsed since your last activity..*?':
+          'Seit deiner letzten Aktivität sind 7 Minuten vergangen.',
         '4Th Legion Helldiver': 'Höllentaucher der IV\\. Legion',
         'Adrammelech': 'Adrammelech',
         'Bladesmeet': 'Hauptplatz der Wachen',
@@ -747,12 +751,14 @@ Options.Triggers.push({
     {
       'locale': 'fr',
       'replaceSync': {
-        'Lyon the Beast King would do battle at Majesty\'s Place': 'Lyon attend des adversaires à sa taille sur la tribune des Souverains',
+        'Lyon the Beast King would do battle at Majesty\'s Place':
+          'Lyon attend des adversaires à sa taille sur la tribune des Souverains',
         'Red Comet': 'Comète Rouge',
         'Albeleo\'s Monstrosity': 'Bête D\'Albeleo',
         'Albeleo\'s Hrodvitnir': 'Hródvitnir',
         'Electric Charge': 'Boule D\'Énergie',
-        '7 minutes have elapsed since your last activity..*?': 'Votre personnage est inactif depuis 7 minutes',
+        '7 minutes have elapsed since your last activity..*?':
+          'Votre personnage est inactif depuis 7 minutes',
         '4Th Legion Helldiver': 'plongeur infernal de la 4e légion',
         'Adrammelech': 'Adrammelech',
         'Bladesmeet': 'Hall des Lames',

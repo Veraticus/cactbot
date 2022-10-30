@@ -142,7 +142,7 @@ Options.Triggers.push({
       netRegex: { id: '003E' },
       condition: (data) => data.waiting,
       run: (data, matches) => {
-        data.spell ?? (data.spell = {});
+        data.spell ??= {};
         data.spell[matches.target] = 'stack';
       },
     },
@@ -183,7 +183,7 @@ Options.Triggers.push({
       netRegex: { id: '004C' },
       condition: (data) => data.waiting,
       run: (data, matches) => {
-        data.spell ?? (data.spell = {});
+        data.spell ??= {};
         data.spell[matches.target] = 'fire';
       },
     },
@@ -241,7 +241,7 @@ Options.Triggers.push({
       netRegex: { id: '00B3' },
       condition: (data) => data.waiting,
       run: (data, matches) => {
-        data.spell ?? (data.spell = {});
+        data.spell ??= {};
         data.spell[matches.target] = 'eye';
       },
     },
@@ -266,7 +266,8 @@ Options.Triggers.push({
       id: 'E2S Countdown Marker Shadoweye Me',
       type: 'HeadMarker',
       netRegex: { id: '00B8' },
-      condition: (data, matches) => data.spell?.[matches.target] === 'eye' && matches.target === data.me,
+      condition: (data, matches) =>
+        data.spell?.[matches.target] === 'eye' && matches.target === data.me,
       delaySeconds: 2,
       suppressSeconds: 10,
       infoText: (_data, _matches, output) => output.text(),
@@ -285,7 +286,8 @@ Options.Triggers.push({
       id: 'E2S Countdown Marker Shadoweye Other',
       type: 'HeadMarker',
       netRegex: { id: '00B8' },
-      condition: (data, matches) => data.spell?.[matches.target] === 'eye' && data.spell?.[data.me] !== 'eye',
+      condition: (data, matches) =>
+        data.spell?.[matches.target] === 'eye' && data.spell?.[data.me] !== 'eye',
       delaySeconds: 2,
       suppressSeconds: 10,
       // Let's just assume these people are stacked.
@@ -315,7 +317,7 @@ Options.Triggers.push({
       netRegex: { id: '0057' },
       condition: (data) => data.waiting,
       run: (data, matches) => {
-        data.spell ?? (data.spell = {});
+        data.spell ??= {};
         data.spell[matches.target] = 'flare';
       },
     },
@@ -408,7 +410,7 @@ Options.Triggers.push({
       netRegex: { id: '001E' },
       condition: (data) => data.waiting,
       run: (data, matches) => {
-        data.spell ?? (data.spell = {});
+        data.spell ??= {};
         data.spell[matches.target] = 'wind';
       },
     },

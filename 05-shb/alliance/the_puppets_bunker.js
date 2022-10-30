@@ -34,7 +34,7 @@ Options.Triggers.push({
       type: 'HeadMarker',
       netRegex: { id: '00C6' },
       run: (data, matches) => {
-        data.busterTargets ?? (data.busterTargets = []);
+        data.busterTargets ??= [];
         data.busterTargets.push(matches.target);
       },
     },
@@ -189,7 +189,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Light Artillery Unit', id: '5213' },
       run: (data, matches) => {
-        data.busterTargets ?? (data.busterTargets = []);
+        data.busterTargets ??= [];
         data.busterTargets.push(matches.target);
       },
     },
@@ -306,7 +306,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: '4FC5' },
       run: (data, matches) => {
-        data.busterTargets ?? (data.busterTargets = []);
+        data.busterTargets ??= [];
         data.busterTargets.push(matches.target);
       },
     },
@@ -343,7 +343,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: ['4FA[CD]', '550[DEF]', '5510'] },
       preRun: (data, matches) => {
-        data.swipe ?? (data.swipe = []);
+        data.swipe ??= [];
         const swipeMap = {
           '4FAC': 'right',
           '4FAD': 'left',
@@ -356,7 +356,7 @@ Options.Triggers.push({
       },
       durationSeconds: 6,
       alertText: (data, _matches, output) => {
-        data.swipe ?? (data.swipe = []);
+        data.swipe ??= [];
         if (data.swipe.length !== 1)
           return;
         // Call and clear the first swipe so we can not call it a second time below.
@@ -590,7 +590,7 @@ Options.Triggers.push({
       condition: Conditions.targetIsYou(),
       response: Responses.tankBuster(),
       run: (data, matches) => {
-        data.busterTargets ?? (data.busterTargets = []);
+        data.busterTargets ??= [];
         data.busterTargets.push(matches.target);
       },
     },
@@ -857,9 +857,12 @@ Options.Triggers.push({
     {
       'locale': 'fr',
       'replaceSync': {
-        '724P-Operated Superior Flight Unit \\(A-Lpha\\)': '724P : avec module de vol renforcé [A-lpha]',
-        '767P-Operated Superior Flight Unit \\(B-Eta\\)': '767P : avec module de vol renforcé [B-êta]',
-        '772P-Operated Superior Flight Unit \\(C-Hi\\)': '772P : avec module de vol renforcé [C-hi]',
+        '724P-Operated Superior Flight Unit \\(A-Lpha\\)':
+          '724P : avec module de vol renforcé [A-lpha]',
+        '767P-Operated Superior Flight Unit \\(B-Eta\\)':
+          '767P : avec module de vol renforcé [B-êta]',
+        '772P-Operated Superior Flight Unit \\(C-Hi\\)':
+          '772P : avec module de vol renforcé [C-hi]',
         '813P-Operated Aegis Unit': '813P : avec unité rempart',
         '905P-Operated Heavy Artillery Unit': '905P : avec unité terrestre lourde',
         'Compound 2P': '2P : amalgame',

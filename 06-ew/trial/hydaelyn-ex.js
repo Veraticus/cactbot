@@ -51,7 +51,10 @@ Options.Triggers.push({
       durationSeconds: (data) => data.crystallize ? 6.5 : 3.5,
       alertText: (data, _matches, output) => {
         if (data.crystallize)
-          return output.combo({ first: output.intercards(), second: output[data.crystallize]() });
+          return output.combo({
+            first: output.intercards(),
+            second: output[data.crystallize](),
+          });
         return output.intercards();
       },
       run: (data) => delete data.crystallize,
@@ -354,7 +357,7 @@ Options.Triggers.push({
       id: 'HydaelynEx Bright Spectrum',
       type: 'StartsUsing',
       netRegex: { id: '65B9', source: 'Hydaelyn' },
-      preRun: (data, matches) => (data.brightSpectrumStack ?? (data.brightSpectrumStack = [])).push(matches.target),
+      preRun: (data, matches) => (data.brightSpectrumStack ??= []).push(matches.target),
       infoText: (data, matches, output) => {
         if (data.me === matches.target)
           return output.spread();

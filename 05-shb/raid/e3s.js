@@ -251,7 +251,7 @@ Options.Triggers.push({
       type: 'Tether',
       netRegex: { id: '005A', target: 'Leviathan' },
       run: (data, matches) => {
-        data.vent ?? (data.vent = []);
+        data.vent ??= [];
         data.vent.push(matches.source);
       },
     },
@@ -259,7 +259,8 @@ Options.Triggers.push({
       id: 'E3S Hydrothermal Vent',
       type: 'Tether',
       netRegex: { id: '005A', target: 'Leviathan', capture: false },
-      condition: (data) => data.vent && data.vent.length === 2 && !data.vent.includes(data.me) && data.role !== 'tank',
+      condition: (data) =>
+        data.vent && data.vent.length === 2 && !data.vent.includes(data.me) && data.role !== 'tank',
       infoText: (_data, _matches, output) => output.text(),
       outputStrings: {
         text: {

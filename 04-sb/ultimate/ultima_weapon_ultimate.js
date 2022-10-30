@@ -185,7 +185,7 @@ Options.Triggers.push({
       type: 'AddedCombatant',
       netRegex: { npcNameId: '1803' },
       condition: (data, matches) => {
-        (data.titanBury ?? (data.titanBury = [])).push(matches);
+        (data.titanBury ??= []).push(matches);
         return data.titanBury.length === 5;
       },
       alertText: (data, _matches, output) => {
@@ -223,7 +223,11 @@ Options.Triggers.push({
             return output.right();
           if (numRight === 3 && numLeft === 2)
             return output.left();
-          console.error(`Titan Bury: bad counts: ${JSON.stringify(data.titanBury)}, ${idx}, ${numLeft}, ${numRight}`);
+          console.error(
+            `Titan Bury: bad counts: ${
+              JSON.stringify(data.titanBury)
+            }, ${idx}, ${numLeft}, ${numRight}`,
+          );
           return;
         }
         console.error(`Titan Bury: failed to find dir: ${JSON.stringify(data.titanBury)}`);
@@ -238,7 +242,7 @@ Options.Triggers.push({
       type: 'Ability',
       netRegex: { id: ['2B6C', '2B6B'], source: ['Garuda', 'Titan'] },
       preRun: (data, matches) => {
-        data.titanGaols ?? (data.titanGaols = []);
+        data.titanGaols ??= [];
         data.titanGaols.push(matches.target);
         if (data.titanGaols.length === 3)
           data.titanGaols.sort();
@@ -434,7 +438,8 @@ Options.Triggers.push({
         'Bomb Boulder': 'Bomber-Brocken',
         'Chirada': 'Chirada',
         'Garuda': 'Garuda',
-        'Heehee HAHA hahaha HEEHEE haha HEEEEEE': 'Nun, ihr Würmer! Ihr wollt die Macht des Windes spüren?',
+        'Heehee HAHA hahaha HEEHEE haha HEEEEEE':
+          'Nun, ihr Würmer! Ihr wollt die Macht des Windes spüren?',
         'Ifrit': 'Ifrit',
         'Lahabrea': 'Lahabrea',
         'Spiny Plume': 'dornig(?:e|er|es|en) Federsturm',

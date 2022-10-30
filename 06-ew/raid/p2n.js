@@ -30,7 +30,9 @@ Options.Triggers.push({
         // This is the real hippo, according to hp.
         const hippos = callData.combatants.filter((c) => c.BNpcID === 13721);
         if (hippos.length !== 1) {
-          console.error('SpokenCataract: There is not exactly one Hippo?!?: ${JSON.stringify(hippos)}');
+          console.error(
+            'SpokenCataract: There is not exactly one Hippo?!?: ${JSON.stringify(hippos)}',
+          );
           data.bodyActor = undefined;
           return;
         }
@@ -165,7 +167,8 @@ Options.Triggers.push({
       type: 'Ability',
       netRegex: { id: '6D14' },
       condition: (data) => data.flareTarget !== data.me,
-      alertText: (data, matches, output) => output.lineStackOn({ player: data.ShortName(matches.target) }),
+      alertText: (data, matches, output) =>
+        output.lineStackOn({ player: data.ShortName(matches.target) }),
       outputStrings: {
         lineStackOn: {
           en: 'Line stack on ${player}',

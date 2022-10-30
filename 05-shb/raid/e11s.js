@@ -170,7 +170,7 @@ Options.Triggers.push({
       type: 'Tether',
       netRegex: { id: '0011' },
       run: (data, matches) => {
-        data.tethers ?? (data.tethers = {});
+        data.tethers ??= {};
         data.tethers[matches.target] = matches.sourceId;
       },
     },
@@ -500,7 +500,8 @@ Options.Triggers.push({
         text: {
           en: 'Protean -> Partner Stacks -> Line Cleave -> Knockback -> Stack',
           de: 'Himmelsrichtung -> Auf Partner sammeln -> Linien AoE -> Rückstoß -> Sammeln',
-          fr: 'Positions -> Packez-vous avec votre partenaire -> Aoe en ligne -> Poussée -> Package',
+          fr:
+            'Positions -> Packez-vous avec votre partenaire -> Aoe en ligne -> Poussée -> Package',
           ja: '8方向散開 -> 2人頭割り -> 直線範囲 -> ノックバック -> 頭割り',
           cn: '八方 -> 分摊 -> 直线 -> 击退 -> 集合',
           ko: '8산개 -> 파트너 쉐어뎀 -> 직선 장판 -> 넉백 -> 모이기',

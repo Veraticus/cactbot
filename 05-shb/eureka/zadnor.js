@@ -66,16 +66,15 @@ const ceIds = {
 };
 const limitCutHeadmarkers = ['004F', '0050', '0051', '0052'];
 // TODO: promote something like this to Conditions?
-const tankBusterOnParty = (ceName) =>
-  (data, matches) => {
-    if (ceName && data.ce !== ceName)
-      return false;
-    if (matches.target === data.me)
-      return true;
-    if (data.role !== 'healer')
-      return false;
-    return data.party.inParty(matches.target);
-  };
+const tankBusterOnParty = (ceName) => (data, matches) => {
+  if (ceName && data.ce !== ceName)
+    return false;
+  if (matches.target === data.me)
+    return true;
+  if (data.role !== 'healer')
+    return false;
+  return data.party.inParty(matches.target);
+};
 Options.Triggers.push({
   zoneId: ZoneId.Zadnor,
   timelineFile: 'zadnor.txt',
@@ -400,7 +399,7 @@ Options.Triggers.push({
       netRegex: { id: limitCutHeadmarkers },
       condition: (data, matches) => data.ce === 'diremite' && data.me === matches.target,
       preRun: (data, matches) => {
-        data.diremiteHailfire ?? (data.diremiteHailfire = []);
+        data.diremiteHailfire ??= [];
         data.diremiteHailfire.push(matches.target);
       },
       alertText: (_data, matches, output) => {
@@ -1008,7 +1007,7 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { source: 'Sartauvoir The Inferno', id: '5E8F' },
       preRun: (data, matches) => {
-        data.sartauvoirPyrocrisis ?? (data.sartauvoirPyrocrisis = []);
+        data.sartauvoirPyrocrisis ??= [];
         data.sartauvoirPyrocrisis.push(matches.target);
       },
       alertText: (data, matches, output) => {
@@ -1547,7 +1546,7 @@ Options.Triggers.push({
       netRegex: { id: '0017' },
       condition: (data) => data.ce === 'dalriadaDiablo',
       preRun: (data, matches) => {
-        data.diabloPillar ?? (data.diabloPillar = []);
+        data.diabloPillar ??= [];
         data.diabloPillar.push(matches.target);
       },
       alertText: (data, matches, output) => {
@@ -1651,7 +1650,8 @@ Options.Triggers.push({
         '4Th-Make Cuchulainn': 'Cuchulainn der IV\\. Legion',
         '4th-Make Hashmal': 'Hashmallim der IV\\. Legion',
         '4th-Make Shemhazai': 'Shemhazai der IV\\. Legion',
-        '7 minutes have elapsed since your last activity.': 'Seit deiner letzten Aktivität sind 7 Minuten vergangen.',
+        '7 minutes have elapsed since your last activity.':
+          'Seit deiner letzten Aktivität sind 7 Minuten vergangen.',
         '(?<!4Th Legion )Blackburn': 'Schwarzbrand',
         'Clibanarius': 'Clibanarius',
         'Dawon The Younger': 'Dawon junior',
@@ -1780,7 +1780,8 @@ Options.Triggers.push({
         '4Th-Make Cuchulainn': 'cúchulainn de la 4e légion',
         '4th-Make Hashmal': 'Hashmal de la 4e légion',
         '4th-Make Shemhazai': 'Shemhazai de la 4e légion',
-        '7 minutes have elapsed since your last activity..*?': 'Votre personnage est inactif depuis 7 minutes',
+        '7 minutes have elapsed since your last activity..*?':
+          'Votre personnage est inactif depuis 7 minutes',
         '(?<!4Th Legion )Blackburn': 'Escarre',
         'Clibanarius': 'Clibanarius',
         'Dawon The Younger': 'Dawon junior',
