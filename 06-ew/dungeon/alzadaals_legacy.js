@@ -69,6 +69,8 @@ Options.Triggers.push({
         safe: {
           en: 'Go ${dir1}',
           de: 'Geh nach ${dir1}',
+          ja: '${dir1}へ',
+          cn: '去 ${dir1}',
           ko: '${dir1}쪽으로',
         },
         default: {
@@ -144,6 +146,8 @@ Options.Triggers.push({
         safe: {
           en: 'Go ${dir1} / ${dir2}',
           de: 'Geh nach ${dir1} / ${dir2}',
+          ja: '${dir1}/${dir2}へ',
+          cn: '去 ${dir1} / ${dir2}',
           ko: '${dir1}/${dir2}쪽으로',
         },
         default: {
