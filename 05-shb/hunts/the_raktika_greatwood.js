@@ -33,6 +33,9 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'GTFO + Look Away',
+          de: 'Schnell raus + weg schauen',
+          cn: '快出去 + 看向其他方向',
+          ko: '멀리 빠지기 + 뒤돌기',
         },
       },
     },
@@ -81,6 +84,9 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Heal to Full',
+          de: 'Voll heilen',
+          cn: '奶满全员',
+          ko: '체력 풀피로',
         },
       },
     },
@@ -120,6 +126,48 @@ Options.Triggers.push({
       outputStrings: {
         in: Outputs.in,
         inThenOut: Outputs.inThenOut,
+      },
+    },
+  ],
+  timelineReplace: [
+    {
+      'locale': 'de',
+      'replaceSync': {
+        'Grassman': 'Grasmann',
+        'Ixtab': 'Ixtab',
+        'Supay': 'Supay',
+      },
+    },
+    {
+      'locale': 'fr',
+      'replaceSync': {
+        'Grassman': 'Sasquatch arboricole',
+        'Ixtab': 'Ixtab',
+        'Supay': 'Supay',
+      },
+    },
+    {
+      'locale': 'ja',
+      'replaceSync': {
+        'Grassman': 'グラスマン',
+        'Ixtab': 'イシュタム',
+        'Supay': 'スペイ',
+      },
+    },
+    {
+      'locale': 'cn',
+      'replaceSync': {
+        'Grassman': '格拉斯曼',
+        'Ixtab': '伊休妲',
+        'Supay': '苏帕伊',
+      },
+    },
+    {
+      'locale': 'ko',
+      'replaceSync': {
+        'Grassman': '숲원인',
+        'Ixtab': '이슈타브',
+        'Supay': '수파이',
       },
     },
   ],
