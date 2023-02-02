@@ -125,6 +125,11 @@ Options.Triggers.push({
       type: 'StartsUsing',
       // 7B07 = Blaster cast (only one cast, but 4 abilities)
       netRegex: { id: '7B07', source: 'Omega', capture: false },
+      durationSeconds: (data) => {
+        const myNum = data.inLine[data.me];
+        if (myNum === 1 || myNum === 3)
+          return 7;
+      },
       response: (data, _matches, output) => {
         // cactbot-builtin-response
         output.responseOutputStrings = {
@@ -159,6 +164,14 @@ Options.Triggers.push({
       type: 'Ability',
       netRegex: { id: '7B08', source: 'Omega', capture: false },
       preRun: (data) => data.loopBlasterCount++,
+      durationSeconds: (data) => {
+        const mechanicNum = data.loopBlasterCount + 1;
+        const myNum = data.inLine[data.me];
+        if (myNum === undefined)
+          return;
+        if (mechanicNum === myNum || mechanicNum === myNum + 2 || mechanicNum === myNum - 2)
+          return 7;
+      },
       response: (data, _matches, output) => {
         // cactbot-builtin-response
         output.responseOutputStrings = {
@@ -324,6 +337,70 @@ Options.Triggers.push({
       },
     },
     {
+      id: 'TOP Party Synergy',
+      type: 'Ability',
+      netRegex: { id: '7B3E', source: 'Omega', capture: false },
+      // Untargetable 3s after this, things appear ~2 after this, 2.5 for safety.
+      delaySeconds: 5.5,
+      promise: async (data) => {
+        data.combatantData = [];
+        // TODO: filter this by the combatants added right before Party Synergy???
+        data.combatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+        })).combatants;
+      },
+      alertText: (data, _matches, output) => {
+        const omegaMNPCId = 15714;
+        const omegaFNPCId = 15715;
+        let countM = 0;
+        let countF = 0;
+        let isFIn = false;
+        let isMIn = false;
+        for (const c of data.combatantData) {
+          if (c.BNpcID === omegaMNPCId) {
+            countM++;
+            if (c.WeaponId === 4)
+              isMIn = true;
+          }
+          if (c.BNpcID === omegaFNPCId) {
+            countF++;
+            if (c.WeaponId === 4)
+              isFIn = true;
+          }
+        }
+        if (countM === 0 || countF === 0) {
+          console.error(`PartySynergy: missing m/f: ${JSON.stringify(data.combatantData)}`);
+          return;
+        }
+        if (isFIn && isMIn)
+          return output.superliminalStrength();
+        if (isFIn && !isMIn)
+          return output.superliminalBladework();
+        if (!isFIn && isMIn)
+          return output.blizzardStrength();
+        if (!isFIn && !isMIn)
+          return output.blizzardBladework();
+      },
+      outputStrings: {
+        blizzardBladework: {
+          en: 'Out Out',
+          de: 'Raus Raus',
+        },
+        superliminalStrength: {
+          en: 'In In on M',
+          de: 'Rein Rein auf M',
+        },
+        superliminalBladework: {
+          en: 'Under F',
+          de: 'Unter W',
+        },
+        blizzardStrength: {
+          en: 'M Sides',
+          de: 'Seitlich von M',
+        },
+      },
+    },
+    {
       id: 'TOP Synergy Marker',
       type: 'GainsEffect',
       // In practice, glitch1 glitch2 marker1 marker2 glitch3 glitch4 etc ordering.
@@ -475,7 +552,7 @@ Options.Triggers.push({
         if (matches.target === data.me)
           return { alarmText: output.dontStack() };
         if (!data.meteorTargets.includes(data.me))
-          return { infoText: output.stack() };
+          return { alertText: output.stack() };
       },
     },
     {
@@ -685,7 +762,7 @@ Options.Triggers.push({
         'Spotlight': 'Scheinwerfer',
         'Storage Violation': 'Speicherverletzung S',
         'Superliminal Steel': 'Klingenkombo B',
-        'Synthetic Shield': 'Effiziente Klingenführung',
+        'Synthetic Shield': 'Synthetischer Schild',
         '(?<! )Wave Cannon Kyrios': 'Wellenkanone P',
         'Wave Repeater': 'Schnellfeuer-Wellenkanone',
       },
