@@ -54,6 +54,10 @@ Options.Triggers.push({
       cannonFodder: {},
       smellDefamation: [],
       smellRot: {},
+      regression: {},
+      bugRot: {},
+      latentDefectCount: 0,
+      patchVulnCount: 0,
       waveCannonStacks: [],
       monitorPlayers: [],
     };
@@ -387,18 +391,22 @@ Options.Triggers.push({
         blizzardBladework: {
           en: 'Out Out',
           de: 'Raus Raus',
+          ko: '밖 밖',
         },
         superliminalStrength: {
           en: 'In In on M',
           de: 'Rein Rein auf M',
+          ko: '안 안 남자',
         },
         superliminalBladework: {
           en: 'Under F',
           de: 'Unter W',
+          ko: '여자 밑',
         },
         blizzardStrength: {
           en: 'M Sides',
           de: 'Seitlich von M',
+          ko: '남자 양옆',
         },
       },
     },
@@ -553,8 +561,9 @@ Options.Triggers.push({
         };
         if (matches.target === data.me)
           return { alarmText: output.dontStack() };
-        if (!data.meteorTargets.includes(data.me))
-          return { alertText: output.stack() };
+        // Note: if you are doing uptime meteors then everybody stacks.
+        // If you are not, then you'll need to ignore this as needed.
+        return { infoText: output.stack() };
       },
     },
     {
@@ -713,6 +722,190 @@ Options.Triggers.push({
       },
     },
     {
+      id: 'TOP Latent Defect Tower',
+      type: 'StartsUsing',
+      netRegex: { id: '7B6F', source: 'Omega', capture: false },
+      infoText: (data, _matches, output) => {
+        const myColor = data.bugRot[data.me];
+        if (myColor === undefined)
+          return;
+        if (data.defamationColor === myColor)
+          return output.colorTowerDefamation({ color: output[myColor]() });
+        else if (myColor)
+          return output.colorTower({ color: output[myColor]() });
+      },
+      outputStrings: {
+        colorTower: {
+          en: '${color} Tower Stack',
+        },
+        colorTowerDefamation: {
+          en: '${color} Tower Defamation',
+        },
+        red: {
+          en: 'Red',
+        },
+        blue: {
+          en: 'Blue',
+        },
+      },
+    },
+    {
+      id: 'TOP Rot Collect',
+      type: 'GainsEffect',
+      // D65 Critical Performance Bug (blue)
+      // DC6 Critical Underflow Bug (red)
+      // Debuffs last 27s
+      netRegex: { effectId: ['D65', 'DC6'] },
+      condition: (data, matches) => {
+        data.bugRot[matches.target] = matches.effectId === 'D65' ? 'blue' : 'red';
+        return (matches.target === data.me) && data.latentDefectCount !== 3;
+      },
+    },
+    {
+      id: 'TOP Rot Pass/Get',
+      type: 'Ability',
+      // 7B5F Cascading Latent Defect (Red Tower)
+      // 7B60 Latent Performance Defect (Blue Tower)
+      // These casts go off 1 second after Latent Defect and go off regardless if someone soaks it
+      netRegex: { id: ['7B5F', '7B60'], source: 'Omega', capture: false },
+      condition: (data) => data.latentDefectCount < 3,
+      suppressSeconds: 1,
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          passRot: {
+            en: 'Pass Rot',
+          },
+          getRot: {
+            en: 'Get Rot',
+          },
+        };
+        if (data.bugRot[data.me])
+          return { infoText: output.passRot() };
+        return { alertText: output.getRot() };
+      },
+      run: (data) => {
+        data.bugRot = {};
+        data.latentDefectCount = data.latentDefectCount + 1;
+      },
+    },
+    {
+      id: 'TOP Latent Defect Tether Towers',
+      type: 'GainsEffect',
+      // D71 Remote Code Smell (blue)
+      // DAF Local Code Smell(red/green)
+      // Using Code Smell as the regressions come ~8.75s after Latent Defect
+      // Debuffs are 23, 44, 65, and 86s
+      // TODO: Possibly include direction?
+      netRegex: { effectId: ['D71', 'DAF'] },
+      condition: Conditions.targetIsYou(),
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 8.75,
+      infoText: (data, matches, output) => {
+        const regression = matches.effectId === 'DAF' ? 'local' : 'remote';
+        const defamation = data.defamationColor;
+        if (defamation === undefined)
+          return;
+        if (regression === 'remote') {
+          const color = defamation === 'red' ? output['blue']() : output['red']();
+          return output.nearTether({ color: color });
+        }
+        if (parseFloat(matches.duration) < 80)
+          return output.farTether({ color: output[defamation]() });
+        const color = defamation === 'red' ? output['blue']() : output['red']();
+        return output.finalTowerFar({ color: color });
+      },
+      outputStrings: {
+        nearTether: {
+          en: 'Stack by ${color} Tower',
+        },
+        farTether: {
+          en: 'Get ${color} Defamation',
+        },
+        finalTowerFar: {
+          en: 'Between ${color} Towers',
+        },
+        red: {
+          en: 'Red',
+        },
+        blue: {
+          en: 'Blue',
+        },
+      },
+    },
+    {
+      id: 'TOP P3 Regression Collect',
+      type: 'GainsEffect',
+      // DC9 Local Regression (red/green)
+      // DCA Remote Regression (blue)
+      netRegex: { effectId: ['DC9', 'DCA'] },
+      run: (data, matches) => {
+        data.regression[matches.target] = matches.effectId === 'DC9' ? 'local' : 'remote';
+      },
+    },
+    {
+      id: 'TOP P3 Second Regression Break Tether',
+      type: 'GainsEffect',
+      // DC9 Local Regression (red/green)
+      // DCA Remote Regression (blue)
+      // Debuffs last 10s
+      // Ideally first patch that breaks is blue, else this will not work
+      // Will call out if has not broken yet and it is safe to break, if by end
+      // of delay and first tether has not broken, it will not call
+      netRegex: { effectId: ['DC9', 'DCA'] },
+      condition: Conditions.targetIsYou(),
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 6,
+      alertText: (data, _matches, output) => {
+        if (
+          (data.patchVulnCount % 2 === 1 && data.regression[data.me] === 'local') ||
+          (data.patchVulnCount === 7 && data.regression[data.me] === 'remote')
+        )
+          return output.breakTether();
+      },
+      outputStrings: {
+        breakTether: {
+          en: 'Break Tether',
+        },
+      },
+    },
+    {
+      id: 'TOP P3 Regression Cleanup',
+      type: 'LosesEffect',
+      // DC9 Local Regression (red/green)
+      // DCA Remote Regression (blue)
+      netRegex: { effectId: ['DC9', 'DCA'] },
+      run: (data, matches) => delete data.regression[matches.target],
+    },
+    {
+      id: 'TOP Regression Break Counter',
+      type: 'GainsEffect',
+      // DBC Magic Vulnerability Up from Patch, lasts 0.96s
+      // TODO: Clean this up for P5 Tethers?
+      netRegex: { effectId: 'DBC' },
+      preRun: (data) => data.patchVulnCount = data.patchVulnCount + 1,
+      delaySeconds: (_data, matches) => parseFloat(matches.duration),
+      suppressSeconds: 1,
+      run: (data) => {
+        // Clear count for later phases
+        if (data.patchVulnCount === 8)
+          data.patchVulnCount = 0;
+      },
+    },
+    {
+      id: 'TOP Rot Spread',
+      type: 'GainsEffect',
+      // D65 Critical Performance Bug (blue)
+      // DC6 Critical Underflow Bug (red)
+      // Debuffs last 27s
+      netRegex: { effectId: ['D65', 'DC6'] },
+      condition: Conditions.targetIsYou(),
+      delaySeconds: (_data, matches) => parseFloat(matches.duration) - 3,
+      alertText: (_data, _matches, output) => output.spread(),
+      run: (data, matches) => delete data.bugRot[matches.target],
+      outputStrings: {
+        spread: Outputs.spread,
+      },
+    },
+    {
       id: 'TOP Oversampled Wave Cannon East',
       type: 'StartsUsing',
       netRegex: { id: '7B6B', source: 'Omega', capture: false },
@@ -720,6 +913,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'East Monitors',
+          ko: '오른쪽 모니터',
         },
       },
     },
@@ -731,6 +925,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'West Monitors',
+          ko: '왼쪽 모니터',
         },
       },
     },
@@ -748,9 +943,11 @@ Options.Triggers.push({
           // assuming there's a N/S conga line?
           monitorOnYou: {
             en: 'Monitor (w/${player1}, ${player2})',
+            ko: '모니터 (+ ${player1}, ${player2})',
           },
           unmarked: {
             en: 'Unmarked',
+            ko: '무징',
           },
         };
         if (data.monitorPlayers.length !== 3)
@@ -783,9 +980,11 @@ Options.Triggers.push({
         output.responseOutputStrings = {
           stacks: {
             en: 'Stacks (${player1}, ${player2})',
+            ko: '쉐어징 (${player1}, ${player2})',
           },
           stackOnYou: {
             en: 'Stack on You (w/${player})',
+            ko: '쉐어징 대상자 (+ ${player})',
           },
         };
         const [m1, m2] = data.waveCannonStacks;
