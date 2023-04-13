@@ -116,6 +116,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Tank Autos',
+          ko: '탱커 평타',
         },
       },
     },
@@ -128,6 +129,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Protean',
+          ko: '기본 산개',
         },
       },
     },
@@ -520,17 +522,17 @@ Options.Triggers.push({
         superliminalStrength: {
           en: 'In In on M',
           de: 'Rein Rein auf M',
-          ko: '안 안 남자',
+          ko: '안 안 M',
         },
         superliminalBladework: {
           en: 'Under F',
           de: 'Unter W',
-          ko: '여자 밑',
+          ko: 'F 밑',
         },
         blizzardStrength: {
           en: 'M Sides',
           de: 'Seitlich von M',
-          ko: '남자 양옆',
+          ko: 'M 양옆',
         },
       },
     },
@@ -740,6 +742,7 @@ Options.Triggers.push({
           },
           sameDebuffPartner: {
             en: '(same debuff as ${player})',
+            ko: '(${player}와 같은 디버프)',
           },
           unknown: Outputs.unknown,
         };
@@ -1253,6 +1256,7 @@ Options.Triggers.push({
           unmarkedBlue: {
             // Probably near baits, but you never know.
             en: 'Unmarked Blue',
+            ko: '디버프 없는 파란색 선',
           },
         };
         const myDebuff = data.trioDebuff[data.me];
@@ -1329,6 +1333,7 @@ Options.Triggers.push({
         unknown: Outputs.unknown,
         mLocation: {
           en: '${dir} M',
+          ko: '${dir} M',
         },
       },
     },
@@ -1346,6 +1351,7 @@ Options.Triggers.push({
           ...nearDistantOutputStrings,
           noDebuff: {
             en: '(no debuff)',
+            ko: '(디버프 없음)',
           },
         };
         const myDebuff = data.trioDebuff[data.me];
@@ -1389,9 +1395,11 @@ Options.Triggers.push({
       outputStrings: {
         optimizedBlizzard: {
           en: 'Follow Laser, Move In',
+          ko: '레이저 따라서 안으로',
         },
         superliminalSteel: {
           en: 'Wait First',
+          ko: '기다렸다가 이동',
         },
       },
     },
@@ -1413,16 +1421,29 @@ Options.Triggers.push({
       outputStrings: nearDistantOutputStrings,
     },
     {
+      id: 'TOP P5 Omega Tether Detector',
+      type: 'Tether',
+      netRegex: { id: '0059', capture: false },
+      condition: (data) => data.phase === 'omega',
+      suppressSeconds: 30,
+      run: (data) => data.seenOmegaTethers = true,
+    },
+    {
       id: 'TOP P5 Omega Tether Bait',
       type: 'GainsEffect',
       // Quickening Dynamis
       netRegex: { effectId: 'D74', count: '03' },
-      condition: (data, matches) => data.phase === 'omega' && matches.target === data.me,
+      condition: (data, matches) => {
+        if (data.phase !== 'omega' || data.seenOmegaTethers)
+          return false;
+        return matches.target === data.me;
+      },
       durationSeconds: 8,
       alarmText: (_data, _matches, output) => output.baitTethers(),
       outputStrings: {
         baitTethers: {
           en: 'Bait Tethers',
+          ko: '선 가져가기',
         },
       },
     },
@@ -1432,7 +1453,7 @@ Options.Triggers.push({
       // don't switch until ~2.7s after the ability goes off.
       type: 'Ability',
       netRegex: { id: '8015', source: 'Omega-M', capture: false },
-      delaySeconds: 3.1,
+      delaySeconds: 4,
       suppressSeconds: 1,
       promise: async (data) => {
         data.combatantData = [];
@@ -1488,21 +1509,27 @@ Options.Triggers.push({
       outputStrings: {
         legsSword: {
           en: 'Close ${northSouth} or ${eastWest}',
+          ko: '${northSouth}/${eastWest} 가까이',
         },
         legsShield: {
           en: 'Close ${northSouth} or ${eastWest}',
+          ko: '${northSouth}/${eastWest} 가까이',
         },
         staffShield: {
           en: 'In ${northSouth} or ${eastWest}',
+          ko: '${northSouth}/${eastWest} 중간',
         },
         staffSwordCombo: {
           en: '${farText} / ${midText}',
+          ko: '${farText} / ${midText}',
         },
         staffSwordFar: {
           en: 'Far ${northSouth} or ${eastWest}',
+          ko: '${northSouth}/${eastWest} 멀리',
         },
         staffSwordMid: {
           en: 'Mid ${northSouth} or ${eastWest}',
+          ko: '${northSouth}/${eastWest} 중간',
         },
         dirN: Outputs.dirN,
         dirE: Outputs.dirE,
@@ -1603,25 +1630,32 @@ Options.Triggers.push({
       outputStrings: {
         safeSpots: {
           en: '${first} => ${second}',
+          ko: '${first} => ${second}',
         },
         // The two legs are split in case somebody wants a "go to M" or "go to F" style call.
         legsSword: {
           en: 'Close ${dir}',
+          ko: '${dir} 가까이',
         },
         legsShield: {
           en: 'Close ${dir}',
+          ko: '${dir} 가까이',
         },
         staffShield: {
           en: 'Mid ${dir}',
+          ko: '${dir} 중간',
         },
         staffSwordCombo: {
           en: '${farText} / ${midText}',
+          ko: '${farText} / ${midText}',
         },
         staffSwordFar: {
           en: 'Far ${dir}',
+          ko: '${dir} 멀리',
         },
         staffSwordMid: {
           en: 'Mid ${dir}',
+          ko: '${dir} 중간',
         },
         dirN: Outputs.dirN,
         dirE: Outputs.dirE,
@@ -1694,21 +1728,27 @@ Options.Triggers.push({
       outputStrings: {
         legsSword: {
           en: 'Close ${dir}',
+          ko: '${dir} 가까이',
         },
         legsShield: {
           en: 'Close ${dir}',
+          ko: '${dir} 가까이',
         },
         staffShield: {
           en: 'Mid ${dir}',
+          ko: '${dir} 중간',
         },
         staffSwordCombo: {
           en: '${farText} / ${midText}',
+          ko: '${farText} / ${midText}',
         },
         staffSwordFar: {
           en: 'Far ${dir}',
+          ko: '${dir} 멀리',
         },
         staffSwordMid: {
           en: 'Mid ${dir}',
+          ko: '${dir} 중간',
         },
         dirN: Outputs.dirN,
         dirE: Outputs.dirE,
@@ -1756,9 +1796,11 @@ Options.Triggers.push({
         // that everybody needs to know that already, and so just call positioning.
         cosmoDiveTank: {
           en: 'Tanks Near (party far)',
+          ko: '탱커 가까이 (본대 멀리)',
         },
         cosmoDiveParty: {
           en: 'Party Far (tanks near)',
+          ko: '본대 멀리 (탱커 가까이)',
         },
       },
     },
@@ -1770,6 +1812,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Bait Middle',
+          ko: '중앙에 장판 유도',
         },
       },
     },
@@ -1782,6 +1825,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Line Charge',
+          ko: '직선 쉐어',
         },
       },
     },
@@ -1793,6 +1837,7 @@ Options.Triggers.push({
       outputStrings: {
         text: {
           en: 'Bait Middle',
+          ko: '중앙에 장판 유도',
         },
       },
     },
