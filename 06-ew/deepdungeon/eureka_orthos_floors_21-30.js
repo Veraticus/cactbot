@@ -1,4 +1,5 @@
 Options.Triggers.push({
+  id: 'EurekaOrthosFloors21_30',
   zoneId: ZoneId.EurekaOrthosFloors21_30,
   triggers: [
     // ---------------- Floor 21-29 Mobs ----------------
@@ -25,6 +26,12 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: '7EAF', source: 'Orthoshelled Dragon' },
       response: Responses.interruptIfPossible(),
+    },
+    {
+      id: 'EO 21-30 Orthos Brobinyak Cold Gaze',
+      type: 'StartsUsing',
+      netRegex: { id: '7EAB', source: 'Orthos Brobinyak', capture: false },
+      response: Responses.awayFromFront(),
     },
     // ---------------- Floor 30 Boss: Tiamat Clone ----------------
     {
@@ -60,6 +67,7 @@ Options.Triggers.push({
   timelineReplace: [
     {
       'locale': 'de',
+      'missingTranslations': true,
       'replaceSync': {
         'Lesser Orthos Dragon': 'nieder(?:e|er|es|en) Orthos-Drache',
         'Orthoknight': 'Orthoritter',
@@ -70,6 +78,7 @@ Options.Triggers.push({
     },
     {
       'locale': 'fr',
+      'missingTranslations': true,
       'replaceSync': {
         'Lesser Orthos Dragon': 'maître aérien mineur Orthos',
         'Orthoknight': 'chevalier Orthos',
@@ -80,6 +89,7 @@ Options.Triggers.push({
     },
     {
       'locale': 'ja',
+      'missingTranslations': true,
       'replaceSync': {
         'Lesser Orthos Dragon': 'オルト・レッサードラゴン',
         'Orthoknight': 'オルト・ナイト',
