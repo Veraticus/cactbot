@@ -39,10 +39,12 @@ Options.Triggers.push({
         waveCannonTarget: {
           en: 'Wave Cannon on YOU',
           de: 'Wellenkanone auf DIR',
+          ko: '파동포 대상자',
         },
         avoidWaveCannon: {
           en: 'Away from ${target} -- Wave Cannon',
           de: 'Weg von ${target} -- Wellenkanone',
+          ko: '${target} 피하기 -- 파동포',
         },
       },
     },
@@ -63,6 +65,7 @@ Options.Triggers.push({
         demonClawYou: {
           en: 'Knockback from boss on YOU',
           de: 'Rückstoß vom Boss auf DIR',
+          ko: '넉백공격 대상자',
         },
       },
     },
@@ -102,6 +105,7 @@ Options.Triggers.push({
         demonicSpread: {
           en: 'Spread -- Don\'t stack!',
           de: 'Verteilen -- Nicht aufeinander!',
+          ko: '산개 -- 쉐어맞으면 안됨!',
         },
       },
     },
@@ -139,6 +143,7 @@ Options.Triggers.push({
         text: {
           en: 'Stay outside hitbox',
           de: 'Auserhalb der Hitbox stehen',
+          ko: '히트박스 밖으로',
         },
       },
     },
@@ -164,6 +169,7 @@ Options.Triggers.push({
         baitSouthernCross: {
           en: 'Bait Ice Puddles',
           de: 'Eisflächen ködern',
+          ko: '얼음장판 유도',
         },
       },
     },
@@ -171,6 +177,7 @@ Options.Triggers.push({
       id: 'ZurvanUN Southern Cross Move',
       type: 'StartsUsing',
       netRegex: { id: '8566', source: 'Zurvan', capture: false },
+      suppressSeconds: 5,
       response: Responses.moveAway(),
     },
     {
@@ -182,11 +189,14 @@ Options.Triggers.push({
         const buddy = data.me === matches.source ? matches.target : matches.source;
         data.tetherBuddy ??= buddy;
       },
-      alertText: (data, _matches, output) => output.tetherBuddy({ buddy: data.tetherBuddy }),
+      alertText: (data, _matches, output) => {
+        return output.tetherBuddy({ buddy: data.ShortName(data.tetherBuddy) });
+      },
       outputStrings: {
         tetherBuddy: {
           en: 'Tethered with ${buddy}',
           de: 'Mit ${buddy} verbunden',
+          ko: '선 연결 ${buddy}',
         },
       },
     },
@@ -201,13 +211,27 @@ Options.Triggers.push({
         data.infiniteElement ??= element;
       },
       delaySeconds: 2,
-      infoText: (data, _matches, output) =>
-        output.infiniteDebuff({ element: data.infiniteElement }),
+      infoText: (data, _matches, output) => {
+        let element = output.unknown();
+        if (data.infiniteElement === 'fire')
+          element = output.fire();
+        if (data.infiniteElement === 'ice')
+          element = output.ice();
+        return output.infiniteDebuff({ element: element });
+      },
       outputStrings: {
         infiniteDebuff: {
           en: '${element} on you',
           de: '${element} auf dir',
+          ko: '${element}',
         },
+        fire: {
+          en: 'Fire',
+        },
+        ice: {
+          en: 'Ice',
+        },
+        unknown: Outputs.unknown,
       },
     },
     {
@@ -215,15 +239,27 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: '857D', source: 'Zurvan', capture: false },
       alertText: (data, _matches, output) => {
-        const element = data.infiniteElement;
+        let element = output.unknown();
+        if (data.infiniteElement === 'fire')
+          element = output.fire();
+        if (data.infiniteElement === 'ice')
+          element = output.ice();
         const buddy = data.tetherBuddy;
-        return output.sealTowers({ element: element, buddy: buddy });
+        return output.sealTowers({ element: element, buddy: data.ShortName(buddy) });
       },
       outputStrings: {
         sealTowers: {
           en: '${element} towers with ${buddy}',
           de: '${element} Türme mit ${buddy}',
+          ko: '${element} 기둥 +${buddy}',
         },
+        fire: {
+          en: 'Fire',
+        },
+        ice: {
+          en: 'Ice',
+        },
+        unknown: Outputs.unknown,
       },
     },
     {
@@ -336,6 +372,43 @@ Options.Triggers.push({
         'Tyrfing': 'ティルフィング',
         'Wave Cannon': '波動砲',
         'the Purge': 'パージ',
+      },
+    },
+    {
+      'locale': 'ko',
+      'replaceSync': {
+        'Execrated Wile': '책략의 신도',
+        'Zurvan': '주르반',
+      },
+      'replaceText': {
+        '\\(circles\\)': '(원)',
+        '\\(explosion\\)': '(폭발)',
+        '\\(puddle\\)': '(장판)',
+        '\\(snapshot\\)': '(유도)',
+        '\\(avoid\\)': '(피하기)',
+        '\\(stack\\)': '(쉐어)',
+        'Ahura Mazda': '아후라 마즈다',
+        'Biting Halberd': '매서운 얼음창',
+        'Broken Seal': '얼음불 문장',
+        'Ciclicle': '얼음 선풍',
+        'Cool Flame': '서늘한 불덩이',
+        'Demonic Dive': '귀신강하',
+        'Fire III': '파이가',
+        'Flaming Halberd': '화염창',
+        'Flare Star': '타오르는 별',
+        'Ice and Fire': '얼음과 불',
+        'Infinite Fire': '불의 각인',
+        'Infinite Ice': '얼음의 각인',
+        'Metal Cutter': '금속 절단',
+        'Eidos': '변이',
+        'Soar': '비상',
+        'Southern Cross': '남십자성',
+        'Tail End': '꼬리 쓸기',
+        'The Demon\'s Claw': '귀신의 발톱',
+        'Twin Spirit': '쌍둥이 영혼',
+        'Tyrfing': '티르핑',
+        'Wave Cannon': '파동포',
+        'the Purge': '숙청',
       },
     },
   ],
