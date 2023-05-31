@@ -34,10 +34,12 @@ Options.Triggers.push({
         onYou: {
           en: 'Spread (avoid posts)',
           de: 'Verteilen (vermeide Stäbe)',
+          fr: 'Écartez-vous',
         },
         onOthers: {
           en: 'Avoid marked players',
           de: 'Vermeide markierte Spieler',
+          fr: 'Évitez les joueurs marqués',
         },
       },
     },
@@ -58,6 +60,7 @@ Options.Triggers.push({
         text: {
           en: 'Avoid jails',
           de: 'Gefängnisen vermeiden',
+          fr: 'Évitez les pièges',
         },
       },
     },
@@ -71,6 +74,7 @@ Options.Triggers.push({
         text: {
           en: 'Under jails',
           de: 'Geh unter ein Gefängnis',
+          fr: 'Sous les pièges',
         },
       },
     },
@@ -78,7 +82,7 @@ Options.Triggers.push({
       id: 'P10N Ultima',
       type: 'StartsUsing',
       netRegex: { id: '827B', source: bossNameUnicode, capture: false },
-      response: Responses.aoe(),
+      response: Responses.bleedAoe(),
     },
     {
       id: 'P10N Pandaemoniac Meltdown',
@@ -146,10 +150,12 @@ Options.Triggers.push({
         soak: {
           en: 'Soak tower',
           de: 'Türme nehmen',
+          fr: 'Prenez une tour',
         },
         avoid: {
           en: 'Avoid towers',
           de: 'Türme vermeiden',
+          fr: 'Évitez les tours',
         },
       },
     },

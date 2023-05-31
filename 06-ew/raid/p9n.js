@@ -13,17 +13,7 @@ Options.Triggers.push({
       id: 'P9N Global Spell',
       type: 'StartsUsing',
       netRegex: { id: '8141', source: 'Kokytos', capture: false },
-      infoText: (_data, _matches, output) => output.text(),
-      outputStrings: {
-        text: {
-          en: 'aoe + bleed',
-          de: 'AoE + Blutung',
-          fr: 'AoE + saignement',
-          ja: 'AoE + DoT',
-          cn: 'AOE + 流血',
-          ko: '전체 공격 + 도트',
-        },
-      },
+      response: Responses.bleedAoe(),
     },
     {
       id: 'P9N Ascendant Fist',
@@ -91,6 +81,7 @@ Options.Triggers.push({
         text: {
           en: 'Get Behind and Under',
           de: 'Geh nach Hinten und Unter den Boss',
+          fr: 'Allez derrière et sous le boss',
         },
       },
     },
@@ -115,7 +106,7 @@ Options.Triggers.push({
         text: {
           en: 'Get Behind and Out',
           de: 'Geh nach Hinten und Raus',
-          fr: 'Passez derrière et extérieur',
+          fr: 'Allez derrière et à l\'extérieur',
           ja: '後ろの外側へ',
           cn: '去背后远离',
           ko: '보스 뒤 바깥쪽으로',
@@ -131,6 +122,7 @@ Options.Triggers.push({
         text: {
           en: 'Go Front and Out',
           de: 'Geh nach Vorne und Raus',
+          fr: 'Allez devant et à l\'extérieur',
         },
       },
     },
@@ -170,10 +162,12 @@ Options.Triggers.push({
         tankbusterOnYouStretchTethers: {
           en: 'Tankbuster on YOU -- stretch tether',
           de: 'Tankbuster auf DIR -- Verbindung strecken',
+          fr: 'Tankbuster sur VOUS -- Étirez le lien',
         },
         tankbusterOn: {
           en: 'Tankbuster on ${player}',
           de: 'Tankbuster auf ${player}',
+          fr: 'Tankbuster sur ${player}',
         },
       },
     },
