@@ -39,6 +39,17 @@ const headmarkers = {
   // vfx/lockon/eff/m0376trg_fire3_a0p.avfx
   chains: '0061',
 };
+const limitCutMap = {
+  [headmarkers.limitCut1]: 1,
+  [headmarkers.limitCut2]: 2,
+  [headmarkers.limitCut3]: 3,
+  [headmarkers.limitCut4]: 4,
+  [headmarkers.limitCut5]: 5,
+  [headmarkers.limitCut6]: 6,
+  [headmarkers.limitCut7]: 7,
+  [headmarkers.limitCut8]: 8,
+};
+const limitCutIds = Object.keys(limitCutMap);
 const wingIds = Object.values(wings);
 const getHeadmarkerId = (data, matches) => {
   if (data.decOffset === undefined) {
@@ -84,6 +95,7 @@ Options.Triggers.push({
         data.expectedFirstHeadmarker = first;
       },
     },
+    // --------------------- Phase 1 ------------------------
     {
       id: 'P12S First Wing',
       type: 'StartsUsing',
@@ -152,18 +164,22 @@ Options.Triggers.push({
         swap: {
           en: 'Swap',
           de: 'Wechseln',
+          fr: 'Swap',
         },
         stay: {
           en: 'Stay',
           de: 'bleib Stehen',
+          fr: 'Restez',
         },
         secondWingCallStay: {
           en: '(stay)',
           de: '(bleib Stehen)',
+          fr: '(restez)',
         },
         secondWingCallSwap: {
           en: '(swap)',
           de: '(Wechseln)',
+          fr: '(swap)',
         },
         allThreeWings: {
           en: '${first} => ${second} => ${third}',
@@ -192,10 +208,12 @@ Options.Triggers.push({
         swap: {
           en: 'Swap',
           de: 'Wechseln',
+          fr: 'Swap',
         },
         stay: {
           en: 'Stay',
           de: 'bleib Stehen',
+          fr: 'Restez',
         },
       },
     },
@@ -209,10 +227,12 @@ Options.Triggers.push({
         partyOutTanksIn: {
           en: 'Party Out (Tanks In)',
           de: 'Gruppe Raus (Tanks Rein)',
+          fr: 'Équipe à l\'extérieur (Tanks à l\'intérieur)',
         },
         tanksInPartyOut: {
           en: 'Tanks In (Party Out)',
           de: 'Gruppe Rein (Tanks Raus)',
+          fr: 'Tanks à l\'intérieur (Équipe à l\'extérieur',
         },
       },
     },
@@ -226,13 +246,42 @@ Options.Triggers.push({
         partyInTanksOut: {
           en: 'Party In (Tanks Out)',
           de: 'Gruppe Rein (Tanks Raus)',
+          fr: 'Équipe à l\'intérieur (Tanks à l\'extérieur)',
         },
         tanksInPartyOut: {
           en: 'Tanks Out (Party In)',
           de: 'Tanks Raus (Gruppe Rein)',
+          fr: 'Tanks à l\'extérieur (Équipe à l\'intérieur',
         },
       },
     },
+    {
+      id: 'P12S Limit Cut',
+      type: 'HeadMarker',
+      netRegex: {},
+      condition: Conditions.targetIsYou(),
+      durationSeconds: 20,
+      alertText: (data, matches, output) => {
+        const id = getHeadmarkerId(data, matches);
+        if (!limitCutIds.includes(id))
+          return;
+        const num = limitCutMap[id];
+        if (num === undefined)
+          return;
+        return output.text({ num: num });
+      },
+      outputStrings: {
+        text: {
+          en: '${num}',
+          de: '${num}',
+          fr: '${num}',
+          ja: '${num}',
+          cn: '${num}',
+          ko: '${num}',
+        },
+      },
+    },
+    // --------------------- Phase 2 ------------------------
     {
       id: 'P12S Geocentrism Vertical',
       type: 'StartsUsing',
@@ -262,6 +311,18 @@ Options.Triggers.push({
     },
   ],
   timelineReplace: [
+    {
+      'locale': 'en',
+      'replaceSync': {
+        'Astral Glow/Umbral Glow': 'Astral/Umbral Glow',
+        'Astral Advance/Umbral Advance': 'Astral/Umbral Advance',
+        'Superchain Coil/Superchain Burst': 'Superchain Coil/Burst',
+        'Apodialogos/Peridialogos': 'Apodia/Peridia',
+        'Theos\'s Saltire/Theos\'s Cross': 'Saltire/Cross',
+        'Astral Impact/Umbral Impact': 'Astral/Umbral Impact',
+        'Astral Advent/Umbral Advent': 'Astral/Umbral Advent',
+      },
+    },
     {
       'locale': 'de',
       'missingTranslations': true,
