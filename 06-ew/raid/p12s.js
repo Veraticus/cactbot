@@ -1,7 +1,3 @@
-// TODO: north / south laser add call for first Paradeigma
-// TODO: laser add call (inner west / inner east?) for second Paradeigma
-// TODO: glaukopis tank swap call
-// TODO: glaukopis tank swap after 2nd hit (if different person took both)
 // TODO: add phase dash calls?? (maybe this is overkill)
 // TODO: Superchain 2B
 // TODO: final Sample safe spot
@@ -134,11 +130,42 @@ const getHeadmarkerId = (data, matches) => {
 Options.Triggers.push({
   id: 'AnabaseiosTheTwelfthCircleSavage',
   zoneId: ZoneId.AnabaseiosTheTwelfthCircleSavage,
+  config: [
+    {
+      id: 'engravement1DropTower',
+      name: {
+        en: 'Paradeigma 2 Tower Strategy',
+        cn: '第一次拉线踩塔方法',
+      },
+      type: 'select',
+      options: {
+        en: {
+          'Tether direct across + nearest quadrant tower (Game8)': 'quadrant',
+          'Clockwise tower from tether': 'clockwise',
+          'No strategy: just call tower color': 'tower',
+        },
+        cn: {
+          '垂直拉线 (Game8)': 'quadrant',
+          '对角拉线': 'clockwise',
+          '仅提示塔颜色': 'tower',
+        },
+      },
+      default: 'tower',
+    },
+  ],
   timelineFile: 'p12s.txt',
   initData: () => {
     return {
       isDoorBoss: true,
+      combatantData: [],
+      paradeigmaCounter: 0,
+      glaukopisSecondHitSame: false,
       engravementCounter: 0,
+      engravement1BeamsPosMap: new Map(),
+      engravement1TetherIds: [],
+      engravement1TetherPlayers: {},
+      engravement1LightBeamsPos: [],
+      engravement1DarkBeamsPos: [],
       engravement1Towers: [],
       engravement3TowerPlayers: [],
       engravement3TetherPlayers: {},
@@ -195,6 +222,87 @@ Options.Triggers.push({
       type: 'StartsUsing',
       netRegex: { id: '8304', source: 'Athena', capture: false },
       response: Responses.aoe(),
+    },
+    {
+      id: 'P12S Paradeigma Counter',
+      type: 'StartsUsing',
+      netRegex: { id: '82ED', source: 'Athena', capture: false },
+      run: (data) => data.paradeigmaCounter++,
+    },
+    {
+      id: 'P12S Paradeigma 1 Clones',
+      type: 'Ability',
+      // 8314 appears to transform the orbs ("Ideas") into clones once in position
+      netRegex: { id: '8314', source: 'Thymou Idea' },
+      condition: (data) => data.paradeigmaCounter === 1,
+      delaySeconds: 0.5,
+      suppressSeconds: 10,
+      promise: async (data, matches) => {
+        data.combatantData = [];
+        const id = parseInt(matches.sourceId, 16);
+        data.combatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+          ids: [id],
+        })).combatants;
+      },
+      infoText: (data, _matches, output) => {
+        if (data.combatantData.length === 0)
+          return output.clones({ dir: output.unknown() });
+        const y = data.combatantData[0]?.PosY;
+        if (y === undefined)
+          return output.clones({ dir: output.unknown() });
+        const cloneSide = y > centerY ? 'south' : 'north';
+        return output.clones({ dir: output[cloneSide]() });
+      },
+      outputStrings: {
+        clones: {
+          en: 'Clones ${dir}',
+        },
+        north: Outputs.north,
+        south: Outputs.south,
+        unknown: Outputs.unknown,
+      },
+    },
+    // In Ray 1 (Paradeigma2), two adds always spawn north in pairs with PosX of [85, 105] or [95, 115].
+    // Each cleaves 1/4th of the arena. So given one PosX, we can determine the inside/outside safe lanes.
+    // TODO: In Ray 2 (SC IIB), the adds have the same cleave width but spawn at [87, 103] or [97, 113].
+    // So "inside east", e.g., is a bit inaccurate.  Because of mech timing, there also isn't time to cross
+    // the arena.  So realistically, this should be combined with SC IIB triggers to indicate whether
+    //  the player needs to move inside or outside to avoid the cleave that will intersect the 2nd orb.
+    // For now, though, display a reminder to avoid the cleaves.
+    {
+      id: 'P12S Ray of Light',
+      type: 'StartsUsing',
+      netRegex: { id: '82EE', source: 'Anthropos' },
+      suppressSeconds: 1,
+      alertText: (data, matches, output) => {
+        const x = Math.round(parseFloat(matches.x));
+        if (x === undefined)
+          return output.avoid();
+        let safeLanes;
+        if (data.paradeigmaCounter === 2) {
+          if (x < 90)
+            safeLanes = 'insideWestOutsideEast';
+          else if (x > 110)
+            safeLanes = 'insideEastOutsideWest';
+          else
+            safeLanes = x < 100 ? 'insideEastOutsideWest' : 'insideWestOutsideEast';
+        }
+        if (safeLanes === undefined)
+          return output.avoid(); // will fire during Ray 2 (SC IIB)
+        return output[safeLanes]();
+      },
+      outputStrings: {
+        insideWestOutsideEast: {
+          en: 'Inside West / Outside East',
+        },
+        insideEastOutsideWest: {
+          en: 'Inside East / Outside West',
+        },
+        avoid: {
+          en: 'Avoid Line Cleaves',
+        },
+      },
     },
     {
       id: 'P12S First Wing',
@@ -529,30 +637,177 @@ Options.Triggers.push({
       netRegex: { id: '8305', source: 'Athena', capture: false },
       run: (data) => ++data.engravementCounter,
     },
-    // In Engravement 1 (Paradeigma 2), 2 players receive lightTower and 2 players receive darkTower.
+    // In Engravement 1 (Paradeigma 2), 2 players receive lightTower and 2 players receive darkTower,
+    // 2 players need to guide the light beam and 2 players need to guide the dark beam.
+    // The operator of the beam extends the beam directly from the outside. The beam is attenuated until the jagged line disappears.
+    // The people in the tower find the people who have the opposite attribute to the debuff and put them in four places.
+    // At NE NW SE SW as a # shape. The position of outside Anthropos is fixed by two situation.
+    // {[97, 75], [125, 97], [103, 125], [75, 103]} and {[103, 75], [125, 103], [97, 125], [75, 97]}. The Anthropos will cast
+    // 'Searing Radiance' for light beam and 'Shadowsear' for dark beam. We use those as a trigger for Tower players place
+    // the Tower.
     // When debuffs expire and towers drop, their debuff changes to lightTilt or darkTilt (same as tower color).
     // At the same time the towers drop, the 4 tethered players receive lightTilt or darkTilt depending on their tether color.
+    //
+    {
+      id: 'P12S Engravement 1 Tether Tracker',
+      type: 'Tether',
+      netRegex: { id: Object.keys(anthroposTetherMap), source: 'Anthropos' },
+      run: (data, matches) => {
+        const tetherType = anthroposTetherMap[matches.id];
+        if (tetherType === undefined)
+          return;
+        data.engravement1TetherPlayers[matches.sourceId] = tetherType;
+        data.engravement1TetherIds.push(parseInt(matches.sourceId, 16));
+      },
+    },
+    {
+      id: 'P12S Engravement 1 Beam',
+      type: 'StartsUsing',
+      netRegex: { id: Object.keys(tetherAbilityToTowerMap), source: 'Anthropos' },
+      condition: (data) => data.engravementCounter === 1,
+      alertText: (data, matches, output) => {
+        if (data.me === matches.target) {
+          if (matches.id === '82F1')
+            return output.lightBeam();
+          return output.darkBeam();
+        }
+      },
+      outputStrings: {
+        lightBeam: {
+          en: 'light beam',
+          cn: '引导光激光',
+        },
+        darkBeam: {
+          en: 'dark beam',
+          cn: '引导暗激光',
+        },
+      },
+    },
     {
       id: 'P12S Engravement 1 Tower Drop',
       type: 'GainsEffect',
       netRegex: { effectId: engravementTowerIds },
       condition: (data) => data.engravementCounter === 1,
       durationSeconds: (_data, matches) => parseFloat(matches.duration),
+      promise: async (data) => {
+        data.combatantData = [];
+        data.combatantData = (await callOverlayHandler({
+          call: 'getCombatants',
+          ids: data.engravement1TetherIds,
+        })).combatants;
+      },
       alertText: (data, matches, output) => {
         data.engravement1Towers.push(matches.target);
+        for (const combatant of data.combatantData) {
+          const x = combatant.PosX;
+          const y = combatant.PosY;
+          const combatantId = combatant.ID;
+          if (combatantId === undefined)
+            return;
+          const tempColor = data.engravement1TetherPlayers[combatantId.toString(16).toUpperCase()];
+          const color = tempColor === 'light' ? 'dark' : 'light';
+          if (data.triggerSetConfig.engravement1DropTower === 'quadrant') {
+            if (x < 80 && y < 100) { // x = 75 && y = 97
+              data.engravement1BeamsPosMap.set('NE', color);
+            } else if (x < 100 && y < 80) { // x = 97 && y = 75
+              data.engravement1BeamsPosMap.set('SW', color);
+            } else if (x > 100 && y < 80) { // x = 103 && y = 75
+              data.engravement1BeamsPosMap.set('SE', color);
+            } else if (x > 120 && y < 100) { // x = 125 && y = 97
+              data.engravement1BeamsPosMap.set('NW', color);
+            } else if (x > 120 && y > 100) { // x = 125 && y = 103
+              data.engravement1BeamsPosMap.set('SW', color);
+            } else if (x > 100 && y > 120) { // x = 103 && y = 125
+              data.engravement1BeamsPosMap.set('NE', color);
+            } else if (x < 100 && y > 120) { // x = 97 && y = 125
+              data.engravement1BeamsPosMap.set('NW', color);
+            } else if (x < 80 && y > 100) { // x = 75 && y = 103
+              data.engravement1BeamsPosMap.set('SE', color);
+            }
+          } else if (data.triggerSetConfig.engravement1DropTower === 'clockwise') {
+            if (x < 80 && y < 100) { // x = 75 && y = 97
+              data.engravement1BeamsPosMap.set('SE', color);
+            } else if (x < 100 && y < 80) { // x = 97 && y = 75
+              data.engravement1BeamsPosMap.set('SE', color);
+            } else if (x > 100 && y < 80) { // x = 103 && y = 75
+              data.engravement1BeamsPosMap.set('SW', color);
+            } else if (x > 120 && y < 100) { // x = 125 && y = 97
+              data.engravement1BeamsPosMap.set('SW', color);
+            } else if (x > 120 && y > 100) { // x = 125 && y = 103
+              data.engravement1BeamsPosMap.set('NW', color);
+            } else if (x > 100 && y > 120) { // x = 103 && y = 125
+              data.engravement1BeamsPosMap.set('NW', color);
+            } else if (x < 100 && y > 120) { // x = 97 && y = 125
+              data.engravement1BeamsPosMap.set('NE', color);
+            } else if (x < 80 && y > 100) { // x = 75 && y = 103
+              data.engravement1BeamsPosMap.set('NE', color);
+            }
+          }
+        }
         if (data.me === matches.target) {
-          if (matches.effectId === engravementIdMap.lightTower)
-            return output.lightTower();
-          return output.darkTower();
+          // if Only notify tower color
+          if (data.triggerSetConfig.engravement1DropTower === 'tower') {
+            if (matches.effectId === engravementIdMap.lightTower)
+              return output.lightTower();
+            return output.darkTower();
+          }
+          data.engravement1DarkBeamsPos = [];
+          data.engravement1LightBeamsPos = [];
+          data.engravement1BeamsPosMap.forEach((value, key) => {
+            if (matches.effectId === engravementIdMap.lightTower && value === 'light') {
+              if (key === 'NE')
+                data.engravement1LightBeamsPos.push(output.northeast());
+              else if (key === 'NW')
+                data.engravement1LightBeamsPos.push(output.northwest());
+              else if (key === 'SE')
+                data.engravement1LightBeamsPos.push(output.southeast());
+              else if (key === 'SW')
+                data.engravement1LightBeamsPos.push(output.southwest());
+            } else if (matches.effectId === engravementIdMap.darkTower && value === 'dark') {
+              if (key === 'NE')
+                data.engravement1DarkBeamsPos.push(output.northeast());
+              else if (key === 'NW')
+                data.engravement1DarkBeamsPos.push(output.northwest());
+              else if (key === 'SE')
+                data.engravement1DarkBeamsPos.push(output.southeast());
+              else if (key === 'SW')
+                data.engravement1DarkBeamsPos.push(output.southwest());
+            }
+          });
+          // if light tower
+          if (matches.effectId === engravementIdMap.lightTower) {
+            return output.lightTowerSide({
+              pos1: data.engravement1LightBeamsPos[0],
+              pos2: data.engravement1LightBeamsPos[1],
+            });
+          }
+          return output.darkTowerSide({
+            pos1: data.engravement1DarkBeamsPos[0],
+            pos2: data.engravement1DarkBeamsPos[1],
+          });
         }
       },
       outputStrings: {
+        lightTowerSide: {
+          en: 'Drop light tower ${pos1}/${pos2}',
+          cn: '去 ${pos1}/${pos2} 放光塔',
+        },
+        darkTowerSide: {
+          en: 'Drop dark tower at ${pos1}/${pos2}',
+          cn: '去 ${pos1}/${pos2} 放暗塔',
+        },
         lightTower: {
           en: 'Drop light tower',
+          cn: '放光塔',
         },
         darkTower: {
           en: 'Drop dark tower',
+          cn: '放暗塔',
         },
+        northeast: Outputs.dirNE,
+        northwest: Outputs.dirNW,
+        southeast: Outputs.dirSE,
+        southwest: Outputs.dirSW,
       },
     },
     {
@@ -917,6 +1172,62 @@ Options.Triggers.push({
           en: 'Dark',
           cn: '暗',
         },
+      },
+    },
+    {
+      id: 'P12S Glaukopis First Cleave',
+      type: 'StartsUsing',
+      netRegex: { id: '82FC', source: 'Athena' },
+      response: (data, matches, output) => {
+        // don't use Responses.tankCleave(); we want to tell the non-targeted tank to swap
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          cleaveOnYou: Outputs.tankCleaveOnYou,
+          tankBusterCleaves: Outputs.tankBusterCleaves,
+          cleaveSwap: Outputs.tankSwap,
+          avoidTankCleaves: Outputs.avoidTankCleaves,
+        };
+        // Multiple players can be hit by the line cleave AoE,
+        // but we only care about the intended target for the Followup trigger
+        data.glaukopisFirstHit = matches.target;
+        if (data.me === matches.target)
+          return { alertText: output.cleaveOnYou() };
+        if (data.role === 'tank')
+          return { alertText: output.cleaveSwap() };
+        if (data.role === 'healer' || data.job === 'BLU')
+          return { alertText: output.tankBusterCleaves() };
+        return { infoText: output.avoidTankCleaves() };
+      },
+    },
+    // Since multiple players could be hit by the 2nd cleave (whoopsie!), we need to check
+    // if *any* of the targets of the 2nd cleave were the original cast target (MT) of the 1st cleave.
+    // If so, we'll assume the original target is using invuln, and no need to swap after the 2nd.
+    {
+      id: 'P12S Glaukopis Second Cleave Collect',
+      type: 'Ability',
+      netRegex: { id: '82FD', source: 'Athena' },
+      run: (data, matches) => {
+        if (matches.target === data.glaukopisFirstHit)
+          data.glaukopisSecondHitSame = true;
+      },
+    },
+    {
+      id: 'P12S Glaukopis Second Cleave Swap',
+      type: 'Ability',
+      netRegex: { id: '82FD', source: 'Athena', capture: false },
+      condition: (data) => data.role === 'tank' || data.job === 'BLU',
+      delaySeconds: 0.1,
+      suppressSeconds: 1,
+      alertText: (data, _matches, output) => {
+        if (data.me === data.glaukopisFirstHit && !data.glaukopisSecondHitSame)
+          return output.tankSwap();
+      },
+      run: (data) => {
+        delete data.glaukopisFirstHit;
+        data.glaukopisSecondHitSame = false;
+      },
+      outputStrings: {
+        tankSwap: Outputs.tankSwap,
       },
     },
     {
@@ -1365,6 +1676,15 @@ Options.Triggers.push({
         data.superchain2aSecondMech = isSecondMechProtean ? 'protean' : 'partners';
       },
     },
+    // TODO: Combine with future SC IIB trigger?  Happens immediately after 1st orb (donut)
+    // and before 2nd orb (protean/partners). Also, rather than calling "sides", it should probably
+    // call the specific side where the 2nd orb is.
+    {
+      id: 'P12S Parthenos',
+      type: 'StartsUsing',
+      netRegex: { id: '8303', source: 'Athena', capture: false },
+      response: Responses.goSides(),
+    },
     // --------------------- Phase 2 ------------------------
     {
       id: 'P12S Geocentrism Vertical',
@@ -1443,8 +1763,10 @@ Options.Triggers.push({
       delaySeconds: 0.5,
       durationSeconds: (data) => {
         // There's ~13 seconds until the first tower and ~18 until the second tower.
+        // Some strats have 'not' take the first tower or the second tower,
+        // so to avoid noisy alerts only extend duration for the long tilts.
         const myRole = data.pangenesisRole[data.me];
-        return myRole === 'not' || myRole === 'longDark' || myRole === 'longLight' ? 17 : 12;
+        return myRole === 'longDark' || myRole === 'longLight' ? 17 : 12;
       },
       suppressSeconds: 999999,
       alertText: (data, _matches, output) => {
@@ -1562,6 +1884,12 @@ Options.Triggers.push({
           darkTower: {
             en: 'Dark Tower',
           },
+          lightTowerSwitch: {
+            en: 'Light Tower (switch)',
+          },
+          darkTowerSwitch: {
+            en: 'Dark Tower (switch)',
+          },
         };
         let tower;
         if (data.pangenesisCurrentColor === 'light')
@@ -1572,10 +1900,12 @@ Options.Triggers.push({
           tower = data.lastPangenesisTowerColor;
         if (tower === undefined)
           return;
-        // TODO: should we also say "Dark Tower (again)" or "Dark Tower (switch)" for emphasis?
-        const severity = tower === data.lastPangenesisTowerColor ? 'infoText' : 'alertText';
-        const text = tower === 'light' ? output.lightTower() : output.darkTower();
-        return { [severity]: text };
+        const isSameTower = tower === data.lastPangenesisTowerColor;
+        if (isSameTower)
+          return { infoText: tower === 'light' ? output.lightTower() : output.darkTower() };
+        if (tower === 'light')
+          return { alertText: output.lightTowerSwitch() };
+        return { alertText: output.darkTowerSwitch() };
       },
     },
   ],
@@ -1594,6 +1924,7 @@ Options.Triggers.push({
     },
     {
       'locale': 'de',
+      'missingTranslations': true,
       'replaceSync': {
         'Anthropos': 'Anthropos',
         '(?<! )Athena': 'Athena',
