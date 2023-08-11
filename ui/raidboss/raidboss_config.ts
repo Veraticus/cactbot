@@ -2300,7 +2300,7 @@ const templateOptions: OptionsTemplate = {
         ko: '웹브라우저를 이용해서 TTS 작동시키기',
       },
       type: 'checkbox',
-      default: true,
+      default: false,
     },
     {
       id: 'RumbleEnabled',
