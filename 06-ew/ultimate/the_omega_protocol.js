@@ -97,6 +97,12 @@ Options.Triggers.push({
       comment: {
         en:
           '<a href="https://github.com/quisquous/cactbot/releases/tag/v0.28.19" target="_blank">Read Notes</a>',
+        de:
+          '<a href="https://github.com/quisquous/cactbot/releases/tag/v0.28.19" target="_blank">Notizen lesen</a>',
+        cn:
+          '<a href="https://github.com/quisquous/cactbot/releases/tag/v0.28.19" target="_blank">阅读笔记</a>',
+        ko:
+          '<a href="https://github.com/quisquous/cactbot/releases/tag/v0.28.19" target="_blank">참고</a>',
       },
       name: {
         en: 'Run: Omega Staff Sword Dodge Direction',
@@ -110,6 +116,10 @@ Options.Triggers.push({
         en: {
           'Dodge Far (by Omega-M)': 'far',
           'Dodge Mid (by Omega-F)': 'mid',
+        },
+        de: {
+          'Ausweichen Fern (von Omega-M)': 'far',
+          'Ausweichen Mitte (von Omega-F)': 'mid',
         },
         cn: {
           '躲远 (by Omega-M)': 'far',
